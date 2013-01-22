@@ -1,31 +1,27 @@
-" Configuration file for vim
-set modelines=0		" CVE-2007-2438
-
-" Normally we use vim-extensions. If you want true vi-compatibility
-" remove change the following statements
-set nocompatible	" Use Vim defaults instead of 100% vi compatibility
-set backspace=2		" more powerful backspacing
-
-" Don't write backup file if vim is being called by "crontab -e"
-au BufWrite /private/tmp/crontab.* set nowritebackup
-" Don't write backup file if vim is being called by "chpass"
-au BufWrite /private/etc/pw.* set nowritebackup
+" @Author: Wasif Malik (wmalik@gmail.com)
+" @Reference: Some stuff taken from this blog post:
+"             http://stevelosh.com/blog/2010/09/coming-home-to-vim
 
 
-" Pathogen stuff
+" -----------------------------------
+" -------- Pathogen stuff -----------
+" -----------------------------------
 call pathogen#infect()
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
 
+
+" -----------------------------------
+" ------- Absolute essentials -------
+" -----------------------------------
+
+set nocompatible	" Use Vim defaults instead of 100% vi compatibility
+colorscheme jellybeans
 syntax on
 filetype on " File type identification
 filetype plugin on " Enable filetype plugins
 filetype indent on " Enable filetype indent
 set nofoldenable
-
-colorscheme jellybeans
-
-" http://stevelosh.com/blog/2010/09/coming-home-to-vim
 set encoding=utf-8
 set scrolloff=3
 set autoindent
@@ -45,8 +41,8 @@ set nowrap
 set textwidth=80
 set formatoptions=qrn1
 set listchars=tab:▸\ ,eol:¬
-
 set number
+
 " For smart indenting
 "set smartindent "'smartindent' and 'cindent' might interfere with file type
 ""based indentation, and should never be used in conjunction with it.
@@ -68,25 +64,28 @@ if exists('+colorcolumn')
 else
   au BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
 endif
+"" Example :Man grep
+runtime! ftplugin/man.vim
+" searches for a tags file in the higher level directories until it is found
+" enables tag browsing no matter where the src is
+set tags=./tags;/
+" highlight extra whitespace
+highlight ExtraWhitespace ctermbg=red guibg=red
+autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
+autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+autocmd BufWinLeave * call clearmatches()
+set tw=80
+" Relative Line numbers
+set relativenumber
+set wildignore=*.o,*~,*.beam,*.swf,*.mp3,*.jpg,*.png,ebin
 
-
-
-
-
-" -- Erlang --
-map <leader>B 2F<d2f>i ""remove an erlang binary term
-"ignore binary files
-:set wildignore=*.o,*~,*.beam,*.swf,*.mp3,*.jpg,*.png,ebin
-" remove trailing whitespace and save the file
-map <leader><Space> $x<Esc>:w<CR>
-let g:erlangManPath = "/usr/local/Cellar/erlang/R15B01/share/man"
-"let g:erlangHighlightErrors = 0
-"let g:erlangHighlightBif = 1
 
 
 " -----------------------------------
 " ------------ Shortcuts ------------
 " -----------------------------------
+
 " Execute the command on current line and paste the output below
 map <F5> yyp!!sh<CR><Esc>
 " shortcut to run a shell command and paste the output in a scratch buffer
@@ -98,7 +97,7 @@ nmap <leader>f :R grep -irn <c-r>=expand("<cword> *")<cr> src lib include test s
 command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | set ft=erlang | r !grep -irn <args> src lib include test script
 " Open a scratch buffer
 command! S new | setlocal buftype=nofile bufhidden=hide noswapfile
-" Open my notes files in a new buffer and goes to the last line
+" Open my notes files in a new buffer and go to the last line
 command! Notes 20new ~/notes/transient.txt | set filetype=markdown | %
 map <F1> :Notes<CR>G
 " Get the current unix timestamp
@@ -120,8 +119,8 @@ map <C-l> :tabnext<CR>
 map <C-h> :tabprev<CR>
 map <Tab>n :tabnew<CR>
 map <Tab>d :tabclose<CR>
-:nnoremap <silent> <Space> :noh<Bar>:echo<CR>
-:nnoremap <C-Space> :noh<Bar>:echo<CR>
+nnoremap <silent> <Space> :noh<Bar>:echo<CR>
+nnoremap <C-Space> :noh<Bar>:echo<CR>
 " Toggle newline/tab view
 map <leader>k :set list!<CR>
 map <leader>v :tabedit ~/.vimrc<CR>
@@ -130,26 +129,19 @@ map Y y$
 nnoremap L $
 nnoremap H ^
 
-" -----------------------------------
-" ------- Absolute essentials -------
-" -----------------------------------
-"" Example :Man grep
-:runtime! ftplugin/man.vim
-" searches for a tags file in the higher level directories until it is found
-" enables tag browsing no matter where the src is
-set tags=./tags;/
-" highlight extra whitespace
-highlight ExtraWhitespace ctermbg=red guibg=red
-autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
-autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
-autocmd InsertLeave * match ExtraWhitespace /\s\+$/
-autocmd BufWinLeave * call clearmatches()
-set tw=80
-" Relative Line numbers
-:set relativenumber
 
 " -----------------------------------
 " ------------- Mouse ---------------
 " -----------------------------------
 set mouse=a
 
+" -----------------------------------
+" ----------- Erlang ----------------
+" -----------------------------------
+map <leader>B 2F<d2f>i ""remove an erlang binary term
+"ignore binary files
+" remove trailing whitespace and save the file
+map <leader><Space> $x<Esc>:w<CR>
+let g:erlangManPath = "/usr/local/Cellar/erlang/R15B01/share/man"
+"let g:erlangHighlightErrors = 0
+"let g:erlangHighlightBif = 1
