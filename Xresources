@@ -1,0 +1,70 @@
+! @Author: Wasif Malik (wmalik@gmail.com)
+
+!............!
+! Appearance !
+!............!
+
+URxvt.scrollBar: false
+URxvt*saveLines:64000
+URxvt*scrollTtyOutput: false
+URxvt*scrollWithBuffer: true
+URxvt*scrollTtyKeypress: true
+
+!URxvt*font: xft:Inconsolata:pixelsize=16
+!URxvt*font: xft:Droid Sans Mono:pixelsize=14
+!URxvt*font: terminus-16
+URxvt*font: xft:Monaco:pixelsize=12
+URxvt*boldFont: xft:Monaco:pixelsize=12
+!URxvt.letterSpace:      -1
+
+URxvt*loginShell: true
+
+URxvt.perl-ext-common:  default,matcher,font-size
+! Clickable URLs !
+URxvt.url-launcher:     /usr/bin/chromium
+URxvt.matcher.button:   1
+
+
+URxvt.keysym.C-Up:     perl:font-size:increase
+URxvt.keysym.C-Down:   perl:font-size:decrease
+URxvt.keysym.C-S-Up:   perl:font-size:incglobal
+URxvt.keysym.C-S-Down: perl:font-size:decglobal
+
+!URxvt.intensityStyles: true
+!URxvt*dynamiccolors: true
+
+
+URxvt*background: #0f0f0f
+URxvt*foreground: #c8c8c8
+
+!black
+URxvt*color0:  #251f1f
+URxvt*color8:  #5e5e5e
+!!red
+URxvt*color1:  #eb4509
+URxvt*color9:  #eb4509
+!green
+URxvt*color2:  #94e76b
+URxvt*color10: #95e76b
+!yellow
+URxvt*color3:  #ffac18
+URxvt*color11: #ffac18
+!blue
+URxvt*color4:  #46aede
+URxvt*color12: #46aede
+!magenta
+URxvt*color5:  #e32c57
+URxvt*color13: #e32c57
+!cyan
+URxvt*color6:  #d6dbac
+URxvt*color14: #d6dbac
+!white
+URxvt*color7:  #efefef
+URxvt*color15: #efefef
+
+URxvt*cursorColor: green
+URxvt*cursorBlink: 1
+
+! Urgency hooks
+URxvt.urgentOnBell: true
+URxvt.iso14755: False

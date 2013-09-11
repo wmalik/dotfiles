@@ -1,27 +1,23 @@
 " @Author: Wasif Malik (wmalik@gmail.com)
-" @Reference: Some stuff taken from this blog post:
+" @Reference: Some stuff taken from these awesome blog posts:
 "             http://stevelosh.com/blog/2010/09/coming-home-to-vim
+"             http://learnvimscriptthehardway.stevelosh.com/
 
 
-" -----------------------------------
-" -------- Pathogen stuff -----------
-" -----------------------------------
+" Pathogen stuff {{{
 call pathogen#infect()
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
+"}}}
 
-
-" -----------------------------------
-" ------- Absolute essentials -------
-" -----------------------------------
-
+" Absolute essentials {{{
 set nocompatible	" Use Vim defaults instead of 100% vi compatibility
-colorscheme jellybeans
-syntax on
-filetype on " File type identification
-filetype plugin on " Enable filetype plugins
-filetype indent on " Enable filetype indent
 set nofoldenable
+colorscheme Tomorrow-Night
+syntax on
+filetype on
+filetype plugin on
+filetype indent on
 set encoding=utf-8
 set scrolloff=3
 set autoindent
@@ -30,18 +26,20 @@ set showcmd
 "set hidden " dont really like the fact that the buffers stay open
 set wildmenu
 set wildmode=list:longest
-set visualbell
+set novisualbell
 set cursorline
 set ttyfast
 set ruler
 set backspace=indent,eol,start
 set laststatus=2
-"set undofile
 set nowrap
+set sidescroll=1
 set textwidth=80
 set formatoptions=qrn1
 set listchars=tab:▸\ ,eol:¬
 set number
+set smartcase
+set showmatch
 
 " For smart indenting
 "set smartindent "'smartindent' and 'cindent' might interfere with file type
@@ -51,20 +49,19 @@ set shiftwidth=4
 set expandtab "pressing tab inserts spaces
 " For disabling the macvim toolbar
 if has("gui_running")
+    set mouse=a
     set guioptions=egmrt
+    set guioptions-=m
+    "set guifont=Inconsolata\ Medium\ 11
+    set guifont=Monaco\ 9
 endif
-"
+
 set directory=/tmp "this is to store all sw* files in /tmp
 set incsearch
 set hlsearch
 
 set ignorecase
-if exists('+colorcolumn')
-  set colorcolumn=80
-else
-  au BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
-endif
-"" Example :Man grep
+set colorcolumn=80
 runtime! ftplugin/man.vim
 " searches for a tags file in the higher level directories until it is found
 " enables tag browsing no matter where the src is
@@ -78,70 +75,137 @@ autocmd BufWinLeave * call clearmatches()
 set tw=80
 " Relative Line numbers
 set relativenumber
-set wildignore=*.o,*~,*.beam,*.swf,*.mp3,*.jpg,*.png,ebin
+set wildignore=*.o,*~,*.beam,*.swf,*.mp3,*.jpg,*.png,ebin,assets
+if filereadable(".vimrc.project")
+    so .vimrc.project
+endif
+"}}}
 
+" Shortcuts {{{
 
-
-" -----------------------------------
-" ------------ Shortcuts ------------
-" -----------------------------------
-
-" Execute the command on current line and paste the output below
-map <F5> yyp!!sh<CR><Esc>
 " shortcut to run a shell command and paste the output in a scratch buffer
-" Example :R ls -l
 command! -nargs=* -complete=shellcmd R new | setlocal buftype=nofile bufhidden=hide noswapfile  | r !<args>
 " grep the word under cursor (case insensitive) in multiple directories
-nmap <leader>f :R grep -irn <c-r>=expand("<cword> *")<cr> src lib include test script
+nmap <leader>f :R grep -sirn <c-r>=expand("<cword> *")<cr> src include test script
 " shortcut to find a string in multiple src dirs, example :F something
-command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | set ft=erlang | r !grep -irn <args> src lib include test script
+command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | set ft=erlang | r !grep -sirn --exclude=tags --exclude-dir=log --exclude-dir=ebin --exclude-dir=assets --exclude-dir=public <args> .
 " Open a scratch buffer
 command! S new | setlocal buftype=nofile bufhidden=hide noswapfile
+command! T tabnew | setlocal buftype=nofile bufhidden=hide noswapfile
 " Open my notes files in a new buffer and go to the last line
-command! Notes 20new ~/notes/transient.txt | set filetype=markdown | %
-map <F1> :Notes<CR>G
+command! Notes tabnew ~/.notes | set filetype=markdown | %
+
 " Get the current unix timestamp
 command! Timestamp r! date \+\%s
 " Get nicely formatted time stamp
-command! Date r! date \+\[\%Y-\%m-\%d\ \%H:\%M:\%S\]
-" Open my ~/.vimrc
-command! Vimrc :tabedit ~/.vimrc
+nnoremap <leader>d :r! date \+\[\%Y-\%m-\%d\ \%H:\%M:\%S\]<cr>
+
 
 let mapleader = ","
-inoremap jj <ESC>
+inoremap jk <Esc>
 nnoremap <leader>w <C-w>v<C-w>l
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
-map <leader>n :NERDTreeToggle<CR>
-map <C-l> :tabnext<CR>
-map <C-h> :tabprev<CR>
-map <Tab>n :tabnew<CR>
-map <Tab>d :tabclose<CR>
-nnoremap <silent> <Space> :noh<Bar>:echo<CR>
-nnoremap <C-Space> :noh<Bar>:echo<CR>
-" Toggle newline/tab view
-map <leader>k :set list!<CR>
-map <leader>v :tabedit ~/.vimrc<CR>
-map :W :w
-map Y y$
-nnoremap L $
-nnoremap H ^
+nnoremap <C-j> <C-w>w
+nnoremap <C-k> <C-w>W
+nnoremap <Backspace> <C-w>w
+nnoremap <S-Backspace> <C-w>W
+nnoremap <leader>n :NERDTreeToggle<CR>
+nnoremap <C-l> :tabnext<CR>
+nnoremap <C-h> :tabprev<CR>
+nnoremap <Tab>n :tabnew<CR>
+nnoremap <Tab>d :tabclose<CR>
+noremap <silent> <Space> :noh<Bar>:echo<CR>
+nnoremap <leader>k :set list!<CR>
+nnoremap :W :w
+nnoremap Y 0y$
+nnoremap 9 $
+inoremap <C-a> <C-o>^
+inoremap <C-e> <C-o>$
+"}}}
 
+" Mouse {{{
+"set mouse=a
+"}}}
 
-" -----------------------------------
-" ------------- Mouse ---------------
-" -----------------------------------
-set mouse=a
-
-" -----------------------------------
-" ----------- Erlang ----------------
-" -----------------------------------
-map <leader>B 2F<d2f>i ""remove an erlang binary term
+" Erlang {{{
+"remove an erlang binary term
+nnoremap <leader>B 2F<d2f>i
 "ignore binary files
 " remove trailing whitespace and save the file
-map <leader><Space> $x<Esc>:w<CR>
-let g:erlangManPath = "/usr/local/Cellar/erlang/R15B01/share/man"
+nnoremap <leader><Space> $x<Esc>:w<CR>
+let g:erlangManPath = "/usr/share/man/man1"
 "let g:erlangHighlightErrors = 0
 "let g:erlangHighlightBif = 1
+command! Er set ft=erlang
+"}}}
+
+" Plugin Conf {{{
+let g:CommandTMaxHeight=10
+"}}}
+
+" Steve Losh Learning Vimscript the Hard Way
+" move a line upward or downward
+nnoremap - ddp
+nnoremap _ ddkP
+
+" Delete current line in insert mode
+inoremap <c-d> <esc>ddi
+
+" Convert the current word to uppercase insert mode
+inoremap <C-u> <Esc>viwUea
+
+iabbrev adn and
+iabbrev @@ wmalik@gmail.com
+nnoremap <leader>ve :vsplit $MYVIMRC<cr>
+nnoremap <leader>vs :source ~/.vimrc<cr>
+
+" surround a word or a visual block with "" (doesnt work with v-line)
+vnoremap <leader>" <esc>`<i"<esc>`>la"
+nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lel
+inoremap <C-q> <Esc>viw<esc>a"<esc>hbi"<esc>lela
+" surround a word or a visual block with {} (doesnt work with v-line)
+vnoremap <leader>{ <esc>`<i}<esc>`>la{
+nnoremap <leader>{ viw<esc>a}<esc>hbi{<esc>lel
+inoremap <C-q> <Esc>viw<esc>a}<esc>hbi{<esc>lela
+" surround a word or a visual block with {} (doesnt work with v-line)
+vnoremap <leader>( <esc>`<i)<esc>`>la(
+nnoremap <leader>( viw<esc>a)<esc>hbi(<esc>lel
+inoremap <C-q> <Esc>viw<esc>a)<esc>hbi(<esc>lela
+" surround a word or a visual block with {} (doesnt work with v-line)
+vnoremap <leader>[ <esc>`<i]<esc>`>la[
+nnoremap <leader>[ viw<esc>a]<esc>hbi[<esc>lel
+inoremap <C-q> <Esc>viw<esc>a]<esc>hbi[<esc>lela
+
+" surround a word or a visual block with '' (doesnt work with v-line)
+vnoremap <leader>" <esc>`<i'<esc>`>la'
+nnoremap <leader>' viw<esc>a'<esc>hbi'<esc>lel
+noh
+" Insert a character at the end of line
+nnoremap <leader>, :normal! mqA,<esc>`q
+nnoremap <leader>. :normal! mqA.<esc>`q
+nnoremap <leader>; :normal! mqA;<esc>`q
+
+" generate exuberant ctags for all directories excluding the assets directory
+nnoremap <leader>ct :!ctags -R --exclude=assets *<cr>
+
+
+" Notes {{{
+" Taken from bare bones vim http://vimeo.com/65250028
+" makes navigation easier without ctags (use gf)
+" set path=**
+" set suffixesadd=.erl,.hrl
+" }}}
+
+
+augroup filetype_erl
+    autocmd!
+    autocmd FileType app.src setlocal filetype=erlang
+    autocmd FileType abtests setlocal filetype=erlang
+ augroup END
+
+inoremap <C-h> <left>
+inoremap <C-l> <right>
+inoremap <C-j> <down>
+inoremap <C-k> <up>
+command! Ds set syntax=0
+command! Z tabnew %
+xnoremap . :norm.<CR>
