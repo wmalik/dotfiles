@@ -13,9 +13,9 @@ URxvt*scrollTtyKeypress: true
 !URxvt*font: xft:Inconsolata:pixelsize=16
 !URxvt*font: xft:Droid Sans Mono:pixelsize=14
 !URxvt*font: terminus-16
-URxvt*font: xft:Monaco:pixelsize=12
-URxvt*boldFont: xft:Monaco:pixelsize=12
-!URxvt.letterSpace:      -1
+!URxvt*font: xft:Monaco:pixelsize=12
+!URxvt*boldFont: xft:Monaco:pixelsize=12
+URxvt.letterSpace: 1
 
 URxvt*loginShell: true
 
@@ -30,8 +30,8 @@ URxvt.keysym.C-Down:   perl:font-size:decrease
 URxvt.keysym.C-S-Up:   perl:font-size:incglobal
 URxvt.keysym.C-S-Down: perl:font-size:decglobal
 
-!URxvt.intensityStyles: true
-!URxvt*dynamiccolors: true
+URxvt.intensityStyles: true
+URxvt*dynamiccolors: true
 
 
 URxvt*background: #0f0f0f
@@ -64,6 +64,13 @@ URxvt*color15: #efefef
 
 URxvt*cursorColor: green
 URxvt*cursorBlink: 1
+
+!URxvt*fadeColor: gray
+URxvt.depth: 32
+URxvt.fading: 70
+URxvt.fadeColor: #5f5f5f
+
+
 
 ! Urgency hooks
 URxvt.urgentOnBell: true
