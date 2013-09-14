@@ -65,7 +65,7 @@ main = do
       , borderWidth         = 1
       , handleEventHook     = fullscreenEventHook --for chrome full screen
       , startupHook         = setWMName "LG3D"
-      , terminal            = "urxvt"
+      , terminal            = "urxvt -fade 10"
 }
 --}}}
 
@@ -163,7 +163,7 @@ colorBlue           = "#66D9EF"
 colorYellow         = "#E6DB74"
 colorWhite          = "#CCCCC6"
 
-colorNormalBorder   = "#CCCCC6"
+colorNormalBorder   = "black"
 colorFocusedBorder  = "red"
 
 
@@ -228,6 +228,8 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask,                    xK_t        ), withFocused $ windows . W.sink)              -- Push window back into tiling
     , ((modMask,                    xK_h        ), sendMessage Shrink)                          -- %! Shrink a master area
     , ((modMask,                    xK_l        ), sendMessage Expand)                          -- %! Expand a master area
+    , ((modMask,                    xK_comma    ), sendMessage (IncMasterN 1))                  -- Increment the number of windows in the master area
+    , ((modMask,                    xK_period   ), sendMessage (IncMasterN (-1)))               -- Deincrement the number of windows in the master area
 
     --Urgency hooks
     , ((modMask,                    xK_BackSpace), focusUrgent)
