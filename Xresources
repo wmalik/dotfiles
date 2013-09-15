@@ -20,7 +20,6 @@ URxvt.letterSpace: 1
 URxvt*loginShell: true
 
 URxvt.perl-ext-common:  default,matcher,font-size
-! Clickable URLs !
 URxvt.url-launcher:     /usr/bin/chromium
 URxvt.matcher.button:   1
 
@@ -30,11 +29,8 @@ URxvt.keysym.C-Down:   perl:font-size:decrease
 URxvt.keysym.C-S-Up:   perl:font-size:incglobal
 URxvt.keysym.C-S-Down: perl:font-size:decglobal
 
-URxvt.intensityStyles: true
-URxvt*dynamiccolors: true
 
-
-URxvt*background: #0f0f0f
+URxvt*background: rgba:0000/0000/0000/eeee
 URxvt*foreground: #c8c8c8
 
 !black
@@ -65,12 +61,9 @@ URxvt*color15: #efefef
 URxvt*cursorColor: green
 URxvt*cursorBlink: 1
 
-!URxvt*fadeColor: gray
+URxvt*fadeColor: black
 URxvt.depth: 32
-URxvt.fading: 70
-URxvt.fadeColor: #5f5f5f
-
-
+URxvt.fading: 7
 
 ! Urgency hooks
 URxvt.urgentOnBell: true

@@ -1,0 +1,3 @@
+xrdb -load ~/.Xresources
+feh --bg-scale ~/.xmonad/wallpaper
+xcompmgr -c &

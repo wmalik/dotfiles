@@ -46,7 +46,7 @@ modMask' = mod4Mask
 myWorkspaces    = ["1:main","2:web","3:vim","4:chat","5:M", "6", "7", "8"]
 -- Dzen/Conky
 myXmonadBar = "dzen2 -x '2010' -y '0' -h '24' -w '620' -ta 'l' -fg '#FFFFFF' -bg '#1B1D1E'"
-myStatusBar = "conky -c /home/wasif/.xmonad/.conky_dzen | dzen2 -x '500' -w '1310' -h '24' -ta 'r' -bg '#1B1D1E' -y '0'"
+myStatusBar = "conky -c ~/.xmonad/.conky_dzen | dzen2 -x '500' -w '1310' -h '24' -ta 'r' -bg '#1B1D1E' -y '0'"
 myBitmapsDir = "/home/wasif/.xmonad/bitmaps"
 --}}}
 -- Main {{{
@@ -65,7 +65,7 @@ main = do
       , borderWidth         = 1
       , handleEventHook     = fullscreenEventHook --for chrome full screen
       , startupHook         = setWMName "LG3D"
-      , terminal            = "urxvt -fade 10"
+      , terminal            = "urxvt"
 }
 --}}}
 
