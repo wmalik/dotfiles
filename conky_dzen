@@ -6,14 +6,14 @@ out_to_x no
 update_interval 2
 
 TEXT
-^bg(lightgray)^fg(black)^i(/home/wasif/.xmonad/bitmaps/mem.xbm)${memperc}% \
-^i(/home/wasif/.xmonad/bitmaps/cpu.xbm)${cpu}% \
+^bg(lightgray)^fg(black)^i($HOME/.xmonad/bitmaps/mem.xbm)${memperc}% \
+^i($HOME/.xmonad/bitmaps/cpu.xbm)${cpu}% \
 ^bg(lightgray)^fg(black)${if_match ${battery_percent BAT0} > 50} \
-^fg(black)^bg(gray)^i(/home/wasif/.xmonad/bitmaps/volume.xbm) ${exec amixer get Master | egrep -o "[0-9]+%" | head -1 | egrep -o "[0-9]*"} \
-^i(/home/wasif/.xmonad/bitmaps/bat_full_01.xbm) ${battery_short} \
+^fg(black)^bg(gray)^i($HOME/.xmonad/bitmaps/volume.xbm) ${exec amixer get Master | egrep -o "[0-9]+%" | head -1 | egrep -o "[0-9]*"} \
+^i($HOME/.xmonad/bitmaps/bat_full_01.xbm) ${battery_short} \
 ${endif} \
 ${if_match ${battery_percent BAT0} < 50} \
-^fg(white)^bg(red)^i(/home/wasif/.xmonad/bitmaps/bat_low_01.xbm) ${battery_short} \
+^fg(white)^bg(red)^i($HOME/.xmonad/bitmaps/bat_low_01.xbm) ${battery_short} \
 ${endif}\
-^bg(white)^fg(\#000000) ^i(/home/wasif/.xmonad/bitmaps/clock.xbm)^fg(\#000000) ${time %d %m %Y} ^fg(\#000000)${time %R} \
+^bg(white)^fg(\#000000) ^i($HOME/.xmonad/bitmaps/clock.xbm)^fg(\#000000) ${time %d %m %Y} ^fg(\#000000)${time %R} \
 ^bg(lightgray) ${weather http://weather.noaa.gov/pub/data/observations/metar/stations/ EDDT temperature}C \
