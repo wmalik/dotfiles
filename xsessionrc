@@ -1,3 +1,4 @@
 xrdb -load ~/.Xresources
-feh --bg-scale ~/.xmonad/wallpaper
+feh --bg-scale `~/.xmonad/scripts/wall.sh`
 xcompmgr -c &
+xscreensaver -nosplash &

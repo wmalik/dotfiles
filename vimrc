@@ -6,7 +6,7 @@
 
 " Pathogen stuff {{{
 call pathogen#infect()
-call pathogen#runtime_append_all_bundles()
+call pathogen#incubate()
 call pathogen#helptags()
 "}}}
 
@@ -52,8 +52,8 @@ if has("gui_running")
     set mouse=a
     set guioptions=egmrt
     set guioptions-=m
-    "set guifont=Inconsolata\ Medium\ 11
-    set guifont=Monaco\ 9
+    set guifont=Inconsolata\ Medium\ 9
+    "set guifont=Monaco\ 9
 endif
 
 set directory=/tmp "this is to store all sw* files in /tmp

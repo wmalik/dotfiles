@@ -5,7 +5,10 @@ out_to_console yes
 out_to_x no
 update_interval 2
 
+
 TEXT
+R:${diskio_read} \
+W:${diskio_write} \
 ^bg(lightgray)^fg(black)^i($HOME/.xmonad/bitmaps/mem.xbm)${memperc}% \
 ^i($HOME/.xmonad/bitmaps/cpu.xbm)${cpu}% \
 ^bg(lightgray)^fg(black)${if_match ${battery_percent BAT0} > 50} \

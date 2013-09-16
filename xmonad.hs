@@ -210,7 +210,7 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask .|. shiftMask,	    xK_m        ), spawn "spotify")
 
     -- Media Keys
-    , ((modMask,                    xK_m        ), spawn "amixer -q sset Master toggle")        -- XF86AudioMute
+    , ((modMask,                    xK_0        ), spawn "amixer -q sset Master toggle")        -- XF86AudioMute
     , ((modMask,                    xK_Down     ), spawn "amixer -q sset Master 5%-")   -- XF86AudioLowerVolume
     , ((modMask,                    xK_Up       ), spawn "amixer -q sset Master 5%+")   -- XF86AudioRaiseVolume
 
