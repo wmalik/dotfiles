@@ -201,7 +201,7 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask .|. shiftMask,      xK_c        ), kill)
 
     -- Programs
-    , ((modMask .|. shiftMask,      xK_p        ), spawn "scrot -e 'mv $f ~/screenshots/' && notify-send -t 1000 captured")
+    , ((modMask .|. shiftMask,      xK_p        ), spawn "scrot -e 'mv $f ~/screenshots/ && notify-send -t 3000 $f'")
     , ((modMask,		            xK_o        ), spawn "chromium")
     , ((modMask .|. shiftMask,      xK_o        ), spawn "chromium --proxy-server=socks5://localhost:9999")
     , ((modMask .|. shiftMask,      xK_n        ), spawn "gvim --remote-tab-silent ~/.notes")
