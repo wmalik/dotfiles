@@ -30,4 +30,5 @@ alias de='sudo dhclient eth0'
 # erlang string module.
 alias eman='man 3erl'
 
-#source ~/.local/bin/bashmarks.sh
+source ~/.local/bin/bashmarks.sh
+source ~/.privrc

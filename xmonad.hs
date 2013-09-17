@@ -75,11 +75,11 @@ main = do
 manageHook' :: ManageHook
 manageHook' = (composeAll . concat $
     [ [resource     =? r            --> doIgnore            |   r   <- myIgnores] -- ignore desktop
-    , [className    =? c            --> doShift  "1:main"   |   c   <- myDev    ] -- move dev to main
-    , [className    =? c            --> doShift  "2:web"    |   c   <- myWebs   ] -- move webs to main
-    , [className    =? c            --> doShift  "3:vim"    |   c   <- myVim    ] -- move webs to main
-    , [className    =? c            --> doShift	 "4:chat"   |   c   <- myChat   ] -- move chat to chat
-    , [className    =? c            --> doShift  "5:M"      |   c   <- myMusic  ] -- move music to music
+    , [className    =? c            --> doShift  "1"   |   c   <- myDev    ] -- move dev to main
+    , [className    =? c            --> doShift  "2"    |   c   <- myWebs   ] -- move webs to main
+    , [className    =? c            --> doShift  "3"    |   c   <- myVim    ] -- move webs to main
+    , [className    =? c            --> doShift	 "4"   |   c   <- myChat   ] -- move chat to chat
+    , [className    =? c            --> doShift  "5"      |   c   <- myMusic  ] -- move music to music
     , [className    =? c            --> doShift  "6"        |   c   <- myGimp   ] -- move img to div
     , [className    =? c            --> doCenterFloat       |   c   <- myFloats ] -- float my floats
     , [name         =? n            --> doCenterFloat       |   n   <- myNames  ] -- float my names
@@ -102,7 +102,7 @@ manageHook' = (composeAll . concat $
         myVim	  = ["Gvim"]
 
         -- resources
-        myIgnores = ["desktop","desktop_window","notify-osd","stalonetray","trayer"]
+        myIgnores = ["desktop","desktop_window","notify-osd", "xfce4-notifyd", "stalonetray","trayer"]
 
         -- names
         myNames   = ["bashrun","Google Chrome Options","Chromium Options"]
@@ -201,7 +201,7 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask .|. shiftMask,      xK_c        ), kill)
 
     -- Programs
-    , ((modMask .|. shiftMask,      xK_p        ), spawn "scrot -s 'mv $f ~/screenshots/'")
+    , ((modMask .|. shiftMask,      xK_p        ), spawn "scrot -e 'mv $f ~/screenshots/' && notify-send -t 1000 captured")
     , ((modMask,		            xK_o        ), spawn "chromium")
     , ((modMask .|. shiftMask,      xK_o        ), spawn "chromium --proxy-server=socks5://localhost:9999")
     , ((modMask .|. shiftMask,      xK_n        ), spawn "gvim --remote-tab-silent ~/.notes")

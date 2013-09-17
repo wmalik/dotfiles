@@ -1,4 +1,5 @@
 #!/bin/bash
 
 files=($HOME/wallpapers/*)
-printf "%s\n" "${files[RANDOM % ${#files[@]}]}"
+wallpaper=`printf "%s\n" "${files[RANDOM % ${#files[@]}]}"`
+feh --bg-scale $wallpaper

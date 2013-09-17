@@ -47,13 +47,19 @@ set showmatch
 set tabstop=4
 set shiftwidth=4
 set expandtab "pressing tab inserts spaces
-" For disabling the macvim toolbar
 if has("gui_running")
     set mouse=a
     set guioptions=egmrt
     set guioptions-=m
     set guifont=Inconsolata\ Medium\ 9
-    "set guifont=Monaco\ 9
+    "
+    " Set cursor color in different modes
+    highlight Cursor guifg=black guibg=lightgreen
+    highlight iCursor guibg=lightgreen
+    set guicursor=n-v-c:block-Cursor
+    set guicursor+=i:ver25-iCursor
+    set guicursor+=n-v-c:blinkon0
+    "set guicursor+=i:blinkwait10
 endif
 
 set directory=/tmp "this is to store all sw* files in /tmp
