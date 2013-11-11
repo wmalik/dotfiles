@@ -61,7 +61,7 @@ URxvt*color15: #efefef
 URxvt*cursorColor: green
 URxvt*cursorBlink: 1
 
-URxvt*fadeColor: black
+URxvt*fadeColor: gray
 URxvt.depth: 32
 URxvt.fading: 7
 

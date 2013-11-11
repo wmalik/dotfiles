@@ -4,19 +4,31 @@ background yes
 out_to_console yes
 out_to_x no
 update_interval 2
-
+#portmon:${tcp_portmon 22 22 count}\
+#NewMails:${mails $HOME/.mail/personal/INBOX} \
+#foo ^ca(1, echo one)^fg(red)click me and i'll echo one^fg()^ca() bar\
 
 TEXT
-R:${diskio_read} \
-W:${diskio_write} \
+IO:${top_io name 1}\
+MEM:${top_mem name 1}\
+${acpitemp}C \
+[R: ${diskio_read} \
+W: ${diskio_write}]\
+${if_up wlan0} \
+^i($HOME/.xmonad/bitmaps/wifi_01.xbm) ${wireless_essid wlan0} \
+${wireless_link_qual_perc wlan0}% \
+^i($HOME/.xmonad/bitmaps/net_up_03.xbm)${upspeed wlan0} \
+^i($HOME/.xmonad/bitmaps/net_down_03.xbm)${downspeed wlan0} \
+${endif} \
 ^bg(lightgray)^fg(black)^i($HOME/.xmonad/bitmaps/mem.xbm)${memperc}% \
 ^i($HOME/.xmonad/bitmaps/cpu.xbm)${cpu}% \
 ^bg(lightgray)^fg(black)${if_match ${battery_percent BAT0} > 50} \
 ^fg(black)^bg(gray)^i($HOME/.xmonad/bitmaps/volume.xbm) ${exec amixer get Master | egrep -o "[0-9]+%" | head -1 | egrep -o "[0-9]*"} \
 ^i($HOME/.xmonad/bitmaps/bat_full_01.xbm) ${battery_short} \
-${endif} \
 ${if_match ${battery_percent BAT0} < 50} \
 ^fg(white)^bg(red)^i($HOME/.xmonad/bitmaps/bat_low_01.xbm) ${battery_short} \
 ${endif}\
-^bg(white)^fg(\#000000) ^i($HOME/.xmonad/bitmaps/clock.xbm)^fg(\#000000) ${time %d %m %Y} ^fg(\#000000)${time %R} \
+${if_up tun0} ^bg(yellow)VPN${endif}\
+${if_running transmission-gt}^bg(orange)^fg(yellow)Torrents${endif}\
+^bg(white)^fg(\#000000) ^i($HOME/.xmonad/bitmaps/clock.xbm)^fg(\#000000) ${time %a %d %m %Y} ^fg(\#000000)${time %R} \
 ^bg(lightgray) ${weather http://weather.noaa.gov/pub/data/observations/metar/stations/ EDDT temperature}C \

@@ -1,6 +1,6 @@
 # Author: Wasif Malik (wmalik@gmail.com)
 
-alias ls='ls --color=auto'
+alias ls='ls --color=auto -h'
 export PATH="/usr/local/bin:$PATH"
 alias fname='find . -name'
 alias kb='killall beam.smp'
@@ -24,6 +24,7 @@ alias webserver='python -m SimpleHTTPServer'
 # Trigger the urgency hook manually e.g. after a script finishes execution
 alias urgency='PS1="$PS1\a"'
 alias de='sudo dhclient eth0'
+alias ltr='ls -ltr'
 
 # Open erlang man pages like a boss. Usually, man string will show you the man
 # page of the C string library. However, eman will show you the man page for the

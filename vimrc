@@ -55,7 +55,7 @@ if has("gui_running")
     "
     " Set cursor color in different modes
     highlight Cursor guifg=black guibg=lightgreen
-    highlight iCursor guibg=lightgreen
+    highlight iCursor guibg=red
     set guicursor=n-v-c:block-Cursor
     set guicursor+=i:ver25-iCursor
     set guicursor+=n-v-c:blinkon0
@@ -80,8 +80,7 @@ autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 set tw=80
 " Relative Line numbers
-set relativenumber
-set wildignore=*.o,*~,*.beam,*.swf,*.mp3,*.jpg,*.png,ebin,assets
+set wildignore=*.o,*~,*.beam,*.swf,*.mp3,*.jpg,*.png,ebin
 if filereadable(".vimrc.project")
     so .vimrc.project
 endif
@@ -208,6 +207,9 @@ augroup filetype_erl
     autocmd FileType abtests setlocal filetype=erlang
  augroup END
 
+
+
+"" UNSORTED
 inoremap <C-h> <left>
 inoremap <C-l> <right>
 inoremap <C-j> <down>
@@ -215,3 +217,4 @@ inoremap <C-k> <up>
 command! Ds set syntax=0
 command! Z tabnew %
 xnoremap . :norm.<CR>
+inoremap bin<Tab> <<"">><Esc>F"i

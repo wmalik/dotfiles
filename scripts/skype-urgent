@@ -1,0 +1,8 @@
+#!/bin/sh
+# This script sets urgency for all skype windows
+
+IDS=$(xdotool search --class 'skype')
+
+for id in $IDS; do
+    ~/.xmonad/scripts/seturgent "${id}"
+done

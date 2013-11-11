@@ -36,5 +36,7 @@
     today = diff --stat @{12am}..HEAD
     total = !git log --pretty=oneline | wc -l
 	d = difftool
+    hub = !echo "https://github.com/`git config remote.origin.url`" | sed "s/git@github.com://g" | xargs chromium
+    url =!sh -c 'HEAD=`git rev-parse HEAD` && SHA1=`[ "$0" = "sh" ] && echo $HEAD || echo $0` && echo `git hub`"/commit/"${SHA1i}'
 [diff]
 	tool = vimdiff
