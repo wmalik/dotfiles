@@ -45,11 +45,11 @@ modMask' :: KeyMask
 modMask' = mod4Mask
 -- Define workspaces
 myWorkspaces    = ["1","2","3","4","5", "6", "7", "8", "9", "10"]
-myXmonadBar = "dzen2 -x '2010' -y '0' -h '24' -w '620' -ta 'l' -fg '#FFFFFF' -bg '#1B1D1E'"
-myStatusBar = "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -x '500' -w '1600' -h '24' -ta 'r' -bg '#1B1D1E' -y '0'"
-myTrayer = "killall trayer; trayer --edge bottom --align right --SetDockType false  --SetPartialStrut false  --expand true  --transparent true --tint 0x000000 --height 23 --widthtype request --alpha 150 &"
-{-myTrayer = "killall trayer;"-}
-myBitmapsDir = "/home/wasif/.xmonad/bitmaps"
+myXmonadBar = "killall dzen2; dzen2 -x '2010' -y '0' -w '1500' -ta 'l'"
+myStatusBar = "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -x '750' -w '1500' -ta 'r' -y '0'"
+{-myTrayer = "killall trayer; trayer --edge bottom --align right --SetDockType false  --SetPartialStrut false  --expand true  --transparent true --tint 0x000000 --height 23 --widthtype request --alpha 150 &"-}
+myTrayer = "killall trayer;"
+myBitmapsDir = "~/.xmonad/bitmaps"
 --}}}
 -- Main {{{
 main = do
@@ -67,7 +67,7 @@ main = do
       , focusedBorderColor  = colorFocusedBorder
       , borderWidth         = 1
       , handleEventHook     = fullscreenEventHook --for chrome full screen
-      , startupHook         = setWMName "LG3D"
+      , startupHook         = spawn "~/.xmonad/scripts/on-start.sh"
       , terminal            = "urxvt -fade 25"
 }
 --}}}
@@ -82,8 +82,6 @@ manageHook' = (composeAll . concat $
     , [className    =? c            --> doShift  "2"    |   c   <- myWebs   ] -- move webs to main
     , [className    =? c            --> doShift  "3"    |   c   <- myVim    ] -- move vim to vim
     , [className    =? c            --> doShift	 "4"   |   c   <- myChat   ] -- move chat to chat
-    , [className    =? c            --> doShift  "5"      |   c   <- myMusic  ] -- move music to music
-    , [className    =? c            --> doShift  "6"        |   c   <- myGimp   ] -- move img to div
     , [className    =? c            --> doCenterFloat       |   c   <- myFloats ] -- float my floats
     , [name         =? n            --> doCenterFloat       |   n   <- myNames  ] -- float my names
     , [isFullscreen                 --> myDoFullFloat                           ]
@@ -96,21 +94,18 @@ manageHook' = (composeAll . concat $
         name      = stringProperty "WM_NAME"
 
         -- classnames
-        myFloats  = ["Smplayer","MPlayer","VirtualBox","Xmessage","XFontSel","Downloads","Nm-connection-editor", "vlc"]
-        myWebs    = ["Firefox","Google-chrome","Chromium", "Chromium-browser"]
-        myMovie   = ["Boxee","Trine"]
-        myMusic	  = ["Rhythmbox","Spotify", "mocp", "MOC"]
+        myFloats  = ["VirtualBox","Xmessage","XFontSel","Downloads"]
+        myWebs    = ["Firefox","Google-chrome","Chromium", "Chromium-browser","Iceweasel","iceweasel"]
         myChat	  = ["Pidgin","Buddy List", "chat", "Skype", "skype"]
-        myGimp	  = ["Gimp"]
         myDev	  = ["urxvt"]
         myVim	  = ["Gvim"]
 
         -- resources
         -- xprop | grep WM_CLASS
-        myIgnores = ["bashrun2-run-dialog", "desktop","desktop_window","notify-osd", "xfce4-notifyd", "stalonetray","trayer","panel"]
+        myIgnores = ["desktop","desktop_window","notify-osd","xfce4-notifyd","stalonetray","trayer","panel"]
 
         -- names
-        myNames   = ["ashrun2-run-dialog", "bashrun","Google Chrome Options","Chromium Options"]
+        myNames   = ["Google Chrome Options","Chromium Options"]
 
 -- a trick for fullscreen but stil allow focusing of other WSs
 myDoFullFloat :: ManageHook
@@ -124,14 +119,14 @@ layoutHook'  =  onWorkspaces ["1","5:M"] customLayout $
 myLogHook :: Handle -> X ()
 myLogHook h = dynamicLogWithPP $ defaultPP
     {
-        ppCurrent           =   dzenColor "black" "3175AD" . pad
-      , ppVisible           =   dzenColor "white" "#1B1D1E" . pad
-      , ppHidden            =   dzenColor "white" "#1B1D1E" . pad
-      , ppHiddenNoWindows   =   dzenColor "#7b7b7b" "#1B1D1E" . pad
+        ppCurrent           =   dzenColor "white" "#517796" . pad
+      , ppVisible           =   dzenColor "white" "black" . pad
+      , ppHidden            =   dzenColor "white" "black" . pad
+      , ppHiddenNoWindows   =   dzenColor "#3D3D3D" "black" . pad
       , ppUrgent            =   dzenColor "black" "red" . pad
       , ppWsSep             =   " "
       , ppSep               =   " | "
-      , ppLayout            =   dzenColor "#ebac54" "#1B1D1E" .
+      , ppLayout            =   dzenColor "#ebac54" "black" .
                                 (\x -> case x of
                                     "ResizableTall"             ->      "^i(" ++ myBitmapsDir ++ "/tall.xbm)"
                                     "Mirror ResizableTall"      ->      "^i(" ++ myBitmapsDir ++ "/mtall.xbm)"
@@ -139,7 +134,7 @@ myLogHook h = dynamicLogWithPP $ defaultPP
                                     "Simple Float"              ->      "~"
                                     _                           ->      x
                                 )
-      , ppTitle             =   (" " ++) . dzenColor "white" "#1B1D1E" . dzenEscape
+      , ppTitle             =   dzenColor "white" "#517796" . dzenEscape . (" "++) . (++" ")
       , ppOutput            =   hPutStrLn h
     }
 
@@ -169,12 +164,12 @@ colorYellow         = "#E6DB74"
 colorWhite          = "#CCCCC6"
 
 colorNormalBorder   = "black"
-colorFocusedBorder  = "orange"
+colorFocusedBorder  = "#9DC8F2"
 
 
 barFont  = "inconsolata"
-barXFont = "inconsolata:size=12"
-xftFont = "xft: inconsolata-12"
+barXFont = "inconsolata:size=14"
+xftFont = "xft: inconsolata-14"
 --}}}
 
 -- Prompt Config {{{
@@ -182,7 +177,7 @@ mXPConfig :: XPConfig
 mXPConfig =
     defaultXPConfig { font                  = barFont
                     , bgColor               = colorBlack
-                    , fgColor               = colorOrange
+                    , fgColor               = colorYellow
                     , bgHLight              = colorGreen
                     , fgHLight              = colorDarkGray
                     , promptBorderWidth     = 1
@@ -202,17 +197,16 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     [
       ((modMask,                    xK_p        ), runOrRaisePrompt largeXPConfig)
     , ((modMask .|. shiftMask,      xK_Return   ), spawn $ XMonad.terminal conf)
-    , ((modMask,                    xK_z   ), spawn "bashrun2")
     , ((modMask,                    xK_q        ), kill)
     , ((modMask .|. shiftMask,      xK_c        ), kill)
 
     -- Programs
-    , ((modMask,                    xK_Print    ), spawn "scrot -e 'mv $f ~/screenshots/ && notify-send -t 3000 $f'")
+    , ((modMask,                    xK_Print    ), spawn "cd ~/screenshots; scrot -t 20 -e 'notify-send -t 2000 $f'")
     , ((modMask,		            xK_o        ), spawn "chromium")
     , ((modMask,		            xK_Escape   ), spawn "~/.local/piyaz/piyaz")
     , ((modMask .|. shiftMask,      xK_n        ), spawn "gvim --remote-tab-silent ~/.notes")
     , ((modMask,		            xK_s        ), spawn "keepassx")
-    , ((0,                	    xF86XK_ScreenSaver ), spawn "xscreensaver-command -lock")
+    , ((0,            xF86XK_ScreenSaver        ), spawn "xscreensaver-command -lock")
     , ((modMask .|. shiftMask,	    xK_l        ), spawn "xscreensaver-command -lock")
     , ((modMask .|. shiftMask,	    xK_m        ), spawn "spotify")
 
@@ -251,9 +245,9 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask .|. shiftMask,     xK_Left      ), shiftToPrev)
 
     -- quit, or restart
-    {-, ((modMask .|. shiftMask,      xK_r        ), io (exitWith ExitSuccess))-}
-    , ((modMask,                   xK_c        ), spawn "killall -SIGUSR1 conky")
-    , ((modMask,                   xK_x        ), spawn "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -x '500' -w '1600' -h '24' -ta 'r' -bg '#1B1D1E' -y '0'")
+    , ((modMask .|. shiftMask,     xK_r         ), io (exitWith ExitSuccess))
+    , ((modMask,                   xK_c         ), spawn "killall -SIGUSR1 conky")
+    , ((modMask,                   xK_x         ), spawn "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -x '750' -w '1500' -ta 'r' -y '0'")
     , ((modMask,                   xK_F1        ), spawn "~/.screenlayout/laptop.sh")
     , ((modMask,                   xK_F2        ), spawn "~/.screenlayout/wooga.sh")
     , ((modMask,                   xK_F3        ), spawn "~/.screenlayout/tv.sh")

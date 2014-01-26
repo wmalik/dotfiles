@@ -14,8 +14,9 @@ alias gvimm='gvim --remote-tab-silent'
 alias xm="vim ~/.xmonad/xmonad.hs"
 alias xr="vim ~/.Xresources"
 
-PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-PS1="$PS1\a"
+#PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+PS1='\[\033[01;32m\][\u@\h \[\033[01;34m\]\W\[\033[01;32m\]]\[\033[01;34m\]\$\[\033[00m\] '
+#PS1="${PS1}\a"
 
 #unlimited history
 export HISTFILESIZE=
@@ -24,7 +25,7 @@ alias webserver='python -m SimpleHTTPServer'
 # Trigger the urgency hook manually e.g. after a script finishes execution
 alias urgency='PS1="$PS1\a"'
 alias de='sudo dhclient eth0'
-alias ltr='ls -ltr'
+alias ll='ls -ltrh'
 
 # Open erlang man pages like a boss. Usually, man string will show you the man
 # page of the C string library. However, eman will show you the man page for the
@@ -33,3 +34,6 @@ alias eman='man 3erl'
 
 source ~/.local/bin/bashmarks.sh
 source ~/.privrc
+#export TERM=rxvt
+xset r rate 400 44
+export MYTERM=urxvt
