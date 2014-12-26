@@ -18,18 +18,17 @@ template2 /home/bruce/.xmonad/bitmaps/\1
 #NewMails:${mails $HOME/.mail/personal/INBOX} \
 #IO:${top_io name 1}\
 #MEM:${top_mem name 1}\
-#${acpiacadapter}\
 
 TEXT
 ^ca(1, urxvt -e htop)\
 ^fg(Dodger Blue)R:^fg(Dark Gray)${diskio_read} ^fg(Sea Green)W:^fg(Dark Gray)${diskio_write} \
 ^fg(Firebrick)Load:^fg(Dark Gray)${loadavg 1} \
 ^ca()\
-${template0 ${acpitemp} > 50 ${acpitemp}1}\
+${template0 ${acpitemp} > 55 ^fg(White)^bg(Red)Hot:\ ${acpitemp}\ }\
 ${template0 ${tcp_portmon\ 22\ 22\ count} > 0 ^fg(White)^bg(Red)SSH}\
 ${template0 ${fs_free_perc} < 5 ^fg(Black)^bg(Orange)\ ^i(${template2\ diskette.xbm})${fs_free}\ }\
 ${if_up wlan0}\
-^ca(1, urxvt -e /sbin/ifconfig wlan0)\
+^ca(1, urxvt -e wicd-curses)\
 ^bg(Dark Slate Gray)^fg()\
  ^fg(Golden)^i($HOME/.xmonad/bitmaps/sm4/xbm/wifi_01.xbm) ^fg(Orange)${wireless_essid wlan0} ${wireless_link_qual_perc wlan0}%^fg() \
 ^ca()\
@@ -42,18 +41,28 @@ ${endif} \
 ^bg(Golden Rod)^fg(Steel Blue)^i($HOME/.xmonad/bitmaps/mem.xbm)^fg(black)${memperc}% \
 ^fg(Steel Blue)^i($HOME/.xmonad/bitmaps/cpu.xbm)^fg(black)${cpu}% \
 ^ca()\
-${if_match ${battery_percent BAT0} > 50} \
+${if_match ${battery_percent BAT0} > 16} \
+^ca(1, urxvt -fn xft:Inconsolata:size=40 -e acpi -b)\
 ^bg(Dark Slate Gray)^fg(Aqua Marine) ^i($HOME/.xmonad/bitmaps/sm4/xbm/bat_full_01.xbm) ^fg(Alice Blue)${battery_short} \
+^ca()\
 ${endif}\
-${if_match ${battery_percent BAT0} < 50} \
-^fg(Khaki)^bg(Firebrick) ^i($HOME/.xmonad/bitmaps/bat_low_01.xbm) ^fg()${battery_short} \
-${execi 10 $HOME/.xmonad/scripts/battery.sh}\
+${if_match ${battery_percent BAT0} <= 16} \
+^ca(1, urxvt -fn xft:Inconsolata:size=40 -e acpi -b)\
+^fg(White)^bg(Red) ^i($HOME/.xmonad/bitmaps/bat_low_01.xbm) ^fg()${battery_short} \
+^ca()\
+${execi 10 $HOME/.xmonad/scripts/battery.sh 16}\
+${endif}\
+${if_up tun0}\
+^ca(1, urxvt -e ifstat -i tun0)\
+^bg(Orange Red)^fg(White) VPN \
+^ca(1, urxvt -e sudo /etc/init.d/openvpn stop)^fg(white) x ^ca()\
+^ca()\
 ${endif}\
 ${if_running transmission-gt}^bg(Saddle Brown)^fg(white) Torrents ${endif}\
-^ca(1, urxvt -e cal)\
+^ca(1, urxvt -fn xft:Inconsolata:size=30 -e cal -A 3)\
 ^bg(black)^fg(Dark Gray) ^i($HOME/.xmonad/bitmaps/mini.clock2.xpm) ${time %a %d %m %Y} ^fg(white)${time %R}^fg() \
 ^ca()\
 ^ca(1, $HOME/.xmonad/scripts/weather.sh)\
-${template0 ${template1} <= 0 ^fg(white)^bg(MediumSlateBlue)\ ${template1}°C} \
+${template0 ${template1} <= 0 ^fg(black)^bg(PowderBlue)\ ${template1}°C} \
 ${template0 ${template1} > 0 ^fg(white)^bg(ForestGreen)\ ${template1}°C} \
 ^ca()\

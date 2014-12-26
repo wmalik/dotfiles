@@ -1,7 +1,6 @@
 -- Author: Wasif Malik (wmalik@gmail.com)
 
--- ~/.xmonad/xmonad.hs
--- Imports {{{
+-- Imports
 import XMonad
 -- Prompt
 import XMonad.Prompt
@@ -30,15 +29,16 @@ import XMonad.Layout.ResizableTile
 import XMonad.Layout.LayoutHints
 import XMonad.Layout.LayoutModifier
 import XMonad.Layout.Grid
+import XMonad.Layout.ShowWName
 -- for chrome full screen
 import XMonad.Hooks.EwmhDesktops
 import Graphics.X11.ExtraTypes.XF86
 import Data.Ratio ((%))
 import qualified XMonad.StackSet as W
 import qualified Data.Map as M
---}}}
 
--- Config {{{
+import XMonad.Actions.UpdatePointer
+-- Config
 -- Define Terminal
 -- Define modMask
 modMask' :: KeyMask
@@ -48,27 +48,29 @@ myWorkspaces    = ["1","2","3","4","5", "6", "7", "8", "9", "10"]
 myXmonadBar = "killall dzen2; dzen2 -x '2010' -y '0' -w '1500' -ta 'l'"
 myStatusBar = "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -x '750' -w '1500' -ta 'r' -y '0'"
 {-myTrayer = "killall trayer; trayer --edge bottom --align right --SetDockType false  --SetPartialStrut false  --expand true  --transparent true --tint 0x000000 --height 23 --widthtype request --alpha 150 &"-}
-myTrayer = "killall trayer;"
-myBitmapsDir = "~/.xmonad/bitmaps"
---}}}
--- Main {{{
+myBitmapsDir = ".xmonad/bitmaps"
+--
+-- Main
 main = do
     dzenLeftBar <- spawnPipe myXmonadBar
     dzenRightBar <- spawnPipe myStatusBar
-    midTrayer <- spawnPipe myTrayer
+    -- midTrayer <- spawnPipe myTrayer
     xmonad $ withUrgencyHookC dzenUrgencyHook { args = ["-bg", "red", "fg", "black", "-xs", "1", "-y", "25"] } urgencyConfig { remindWhen = Every 15 } $ defaultConfig
       { workspaces          = myWorkspaces
       , keys                = keys'
       , modMask             = modMask'
-      , layoutHook          = layoutHook'
+      -- , layoutHook          = layoutHook'
+      -- , layoutHook          = myLayout
+      , layoutHook          = customLayout
       , manageHook          = manageHook'
-      , logHook             = myLogHook dzenLeftBar >> fadeInactiveLogHook 0xdddddddd
+      , logHook             = myLogHook dzenLeftBar >> fadeInactiveLogHook 0xdddddddd >> updatePointer (Relative 0.9 0.9)
       , normalBorderColor   = colorNormalBorder
       , focusedBorderColor  = colorFocusedBorder
-      , borderWidth         = 1
-      , handleEventHook     = fullscreenEventHook --for chrome full screen
+      , borderWidth         = 2
+      , handleEventHook     = fullscreenEventHook --for chrome full screen-- {{{-- }}}
       , startupHook         = spawn "~/.xmonad/scripts/on-start.sh"
-      , terminal            = "urxvt -fade 25"
+      , terminal            = "urxvt"
+      , focusFollowsMouse   = False
 }
 --}}}
 
@@ -81,7 +83,8 @@ manageHook' = (composeAll . concat $
     , [className    =? c            --> doShift  "1"   |   c   <- myDev    ] -- move dev to main
     , [className    =? c            --> doShift  "2"    |   c   <- myWebs   ] -- move webs to main
     , [className    =? c            --> doShift  "3"    |   c   <- myVim    ] -- move vim to vim
-    , [className    =? c            --> doShift	 "4"   |   c   <- myChat   ] -- move chat to chat
+    , [className    =? c            --> doShift	 "4"   |   c   <- myPidgin  ]
+    , [className    =? c            --> doShift	 "4"   |   c   <- mySkype  ]
     , [className    =? c            --> doCenterFloat       |   c   <- myFloats ] -- float my floats
     , [name         =? n            --> doCenterFloat       |   n   <- myNames  ] -- float my names
     , [isFullscreen                 --> myDoFullFloat                           ]
@@ -94,15 +97,16 @@ manageHook' = (composeAll . concat $
         name      = stringProperty "WM_NAME"
 
         -- classnames
-        myFloats  = ["VirtualBox","Xmessage","XFontSel","Downloads"]
         myWebs    = ["Firefox","Google-chrome","Chromium", "Chromium-browser","Iceweasel","iceweasel"]
-        myChat	  = ["Pidgin","Buddy List", "chat", "Skype", "skype"]
+        myPidgin  = ["Pidgin","Buddy List", "chat"]
+        mySkype	  = ["Skype", "skype"]
         myDev	  = ["urxvt"]
         myVim	  = ["Gvim"]
 
         -- resources
         -- xprop | grep WM_CLASS
-        myIgnores = ["desktop","desktop_window","notify-osd","xfce4-notifyd","stalonetray","trayer","panel"]
+        myFloats  = ["notify-osd","Xmessage","XFontSel","Downloads","bashrun"]
+        myIgnores = ["xfce4-notifyd","stalonetray","trayer","panel"]
 
         -- names
         myNames   = ["Google Chrome Options","Chromium Options"]
@@ -111,15 +115,14 @@ manageHook' = (composeAll . concat $
 myDoFullFloat :: ManageHook
 myDoFullFloat = doF W.focusDown <+> doFullFloat
 -- }}}
-layoutHook'  =  onWorkspaces ["1","5:M"] customLayout $
-                onWorkspaces ["7"] gimpLayout $
-                customLayout2
+-- layoutHook'  =  onWorkspaces ["4"] gridLayout $
+--                 fullScreenLayout
 
 --Bar
 myLogHook :: Handle -> X ()
 myLogHook h = dynamicLogWithPP $ defaultPP
     {
-        ppCurrent           =   dzenColor "white" "#517796" . pad
+        ppCurrent           =   dzenColor "white" "ForestGreen" . pad
       , ppVisible           =   dzenColor "white" "black" . pad
       , ppHidden            =   dzenColor "white" "black" . pad
       , ppHiddenNoWindows   =   dzenColor "#3D3D3D" "black" . pad
@@ -128,28 +131,20 @@ myLogHook h = dynamicLogWithPP $ defaultPP
       , ppSep               =   " | "
       , ppLayout            =   dzenColor "#ebac54" "black" .
                                 (\x -> case x of
-                                    "ResizableTall"             ->      "^i(" ++ myBitmapsDir ++ "/tall.xbm)"
-                                    "Mirror ResizableTall"      ->      "^i(" ++ myBitmapsDir ++ "/mtall.xbm)"
-                                    "Full"                      ->      "^i(" ++ myBitmapsDir ++ "/full.xbm)"
-                                    "Simple Float"              ->      "~"
-                                    _                           ->      x
+                                    "Spacing 3 Tall"         -> "^i(" ++ myBitmapsDir ++ "/tall.xbm)"
+                                    "Mirror Spacing 3 Tall"  -> "^i(" ++ myBitmapsDir ++ "/mtall.xbm)"
+                                    "Full"                   -> "^i(" ++ myBitmapsDir ++ "/full.xbm)"
+                                    _                        -> x
                                 )
-      , ppTitle             =   dzenColor "white" "#517796" . dzenEscape . (" "++) . (++" ")
+      , ppTitle             =   dzenColor "white" "MidnightBlue" . dzenEscape . (" "++) . (++" ")
       , ppOutput            =   hPutStrLn h
     }
 
 -- Layout
-customLayout = avoidStruts $ tiled ||| Mirror tiled ||| Full ||| simpleFloat
-  where
-    tiled   = ResizableTall 1 (2/100) (1/2) []
 
-customLayout2 = avoidStruts $ Full ||| tiled ||| Mirror tiled ||| simpleFloat
-  where
-    tiled   = ResizableTall 1 (2/100) (1/2) []
-
-gimpLayout  = avoidStruts $ withIM (0.11) (Role "gimp-toolbox") $
-              reflectHoriz $
-              withIM (0.15) (Role "gimp-dock") Full
+customLayout = avoidStruts $ tiled1 ||| Mirror tiled1 ||| Full
+   where
+     tiled1 = spacing 3 $ Tall 1 (2/100) (1/2)
 
 --}}}
 -- Theme {{{
@@ -164,7 +159,7 @@ colorYellow         = "#E6DB74"
 colorWhite          = "#CCCCC6"
 
 colorNormalBorder   = "black"
-colorFocusedBorder  = "#9DC8F2"
+colorFocusedBorder  = "red"
 
 
 barFont  = "inconsolata"
@@ -201,8 +196,8 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask .|. shiftMask,      xK_c        ), kill)
 
     -- Programs
-    , ((modMask,                    xK_Print    ), spawn "cd ~/screenshots; scrot -t 20 -e 'notify-send -t 2000 $f'")
-    , ((modMask,		            xK_o        ), spawn "chromium")
+    , ((modMask,                    xK_Print    ), spawn "cd ~/screenshots; scrot -t 20 -e 'notify-send -t 1000 $f'")
+    , ((modMask,		            xK_o        ), spawn "firefox")
     , ((modMask,		            xK_Escape   ), spawn "~/.local/piyaz/piyaz")
     , ((modMask .|. shiftMask,      xK_n        ), spawn "gvim --remote-tab-silent ~/.notes")
     , ((modMask,		            xK_s        ), spawn "keepassx")
@@ -245,13 +240,15 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask .|. shiftMask,     xK_Left      ), shiftToPrev)
 
     -- quit, or restart
-    , ((modMask .|. shiftMask,     xK_r         ), io (exitWith ExitSuccess))
     , ((modMask,                   xK_c         ), spawn "killall -SIGUSR1 conky")
     , ((modMask,                   xK_x         ), spawn "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -x '750' -w '1500' -ta 'r' -y '0'")
     , ((modMask,                   xK_F1        ), spawn "~/.screenlayout/laptop.sh")
     , ((modMask,                   xK_F2        ), spawn "~/.screenlayout/wooga.sh")
     , ((modMask,                   xK_F3        ), spawn "~/.screenlayout/tv.sh")
-    , ((modMask,                   xK_r        ), spawn "/usr/bin/xmonad --recompile && /usr/bin/xmonad --restart")
+    --, ((modMask,                   xK_r         ), spawn "/usr/bin/xmonad --recompile && /usr/bin/xmonad --restart")
+
+    -- cycle wallpaper
+    , ((modMask,     xK_d         ), spawn "~/.xmonad/scripts/wall.sh") -- doesnt work
     ]
     ++
     -- mod-[1..9] %! Switch to workspace N
@@ -269,5 +266,3 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
         | (key, sc) <- zip [xK_w, xK_e] [1, 0]
         , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
 
---}}}
--- vim:foldmethod=marker sw=4 sts=4 ts=4 tw=0 et ai nowrap

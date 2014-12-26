@@ -2,7 +2,7 @@
 
 alias ls='ls --color=auto -h'
 export PATH="/usr/local/bin:$PATH"
-alias fname='find . -name'
+alias f='find . -name'
 alias kb='killall beam.smp'
 alias g='git'
 alias girn='grep -irn'
@@ -34,6 +34,16 @@ alias eman='man 3erl'
 
 source ~/.local/bin/bashmarks.sh
 source ~/.privrc
-#export TERM=rxvt
-xset r rate 400 44
-export MYTERM=urxvt
+if [ ${DISPLAY:="NOT_SET"} == ":0" ]
+then
+    xset r rate 400 44 &>/dev/null
+else
+    echo "No XSession detected"
+fi
+
+# Image viewing
+alias fehi="feh -F --draw-tinted --info \"exif '%f' | grep 'Model\|DateTimeOriginal\|FNumber\|ISO\|Exposure\ Time\|Focal\ Length\|F-Number\|Shutter\|Aperture\|Compression'\""
+
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+
+export PATH=$PATH:~/.local/bin

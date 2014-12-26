@@ -11,10 +11,7 @@
     diff = auto
     status = auto
 [color "diff"]
-    meta = blue bold
-    frag = magenta bold
-    old = red
-    new = green
+    whitespace = red reverse
 [color "status"]
     added = green
     changed = blue bold

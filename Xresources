@@ -11,9 +11,9 @@ URxvt.hold: true
 !............!
 ! Colors from /etc/X11/rgb.txt
 
-URxvt.title: wterm
+URxvt.title: rxvt-unicode-256color
 URxvt.pointerColor: green
-URxvt.internalBorder: 10
+URxvt.internalBorder: 2
 URxvt.scrollBar: false
 URxvt*saveLines:64000
 URxvt*scrollTtyOutput: false
@@ -28,43 +28,76 @@ URxvt*font: xft:Inconsolata:size=12
 !URxvt.letterSpace: 1
 URxvt.keysym.M-C-1: command:\033]710;xft:Inconsolata:size=12\007\033]711;xft:Inconsolata:size=12\007
 URxvt.keysym.M-C-2: command:\033]710;xft:terminus:size=12\007\033]711;xft:terminus:size=12\007
+
+!............!
+!   Colors   !
+!............!
+
+
 URxvt*colorBD: SeaGreen
 URxvt*colorIT: pink
 
-URxvt*background: Black
-URxvt*foreground: Gainsboro
+urxvt*foreground: white
+urxvt*background: black
 
-!black
-URxvt*color0:  #251f1f
-URxvt*color8:  #5e5e5e
-!red
-URxvt*color1:  #eb4509
-URxvt*color9:  #eb4509
-!green
-URxvt*color2:  Green
-URxvt*color10: Lime Green
-!yellow
-URxvt*color3:  #ffac18
-URxvt*color11: #ffac18
-!blue
-URxvt*color4:  Blue
-URxvt*color12: SlateBlue2
-!magenta
-URxvt*color5:  Yellow
-URxvt*color13: Yellow
-!cyan
-URxvt*color6:  Red
-URxvt*color14: Red
-!white
-URxvt*color7:  #efefef
-URxvt*color15: #efefef
+
+! Taken from http://bastian.rieck.ru/blog/posts/2013/making_urxvt_beautiful/
+*color0:  #2E3436
+*color1:  #a40000
+*color2:  #4E9A06
+*color3:  #C4A000
+*color4:  #3465A4
+*color5:  #75507B
+*color6:  #ce5c00
+*color7:  #babdb9
+*color8:  #555753
+*color9:  #EF2929
+*color10: #8AE234
+*color11: #FCE94F
+*color12: #729FCF
+*color13: #AD7FA8
+*color14: #fcaf3e
+*color15: #EEEEEC
+
+! Taken from http://bastian.rieck.ru/blog/posts/2013/making_urxvt_beautiful/
+urxvt*transparent: true
+urxvt*shading: 8
+
+!URxvt*background: Black
+!URxvt*foreground: Gainsboro
+!
+!!black
+!URxvt*color0:  #251f1f
+!URxvt*color8:  #5e5e5e
+!!red
+!URxvt*color1:  #eb4509
+!URxvt*color9:  #eb4509
+!!green
+!URxvt*color2:  SeaGreen
+!URxvt*color10: SeaGreen
+!!yellow
+!URxvt*color3:  #ffac18
+!URxvt*color11: #ffac18
+!!blue
+!URxvt*color4:  SlateBlue2
+!URxvt*color12: SlateBlue2
+!!magenta
+!URxvt*color5:  Yellow
+!URxvt*color13: Yellow
+!!cyan
+!URxvt*color6:  DarkCyan
+!URxvt*color14: DarkCyan
+!!white
+!URxvt*color7:  #efefef
+!URxvt*color15: #efefef
 
 URxvt*cursorColor: green
-URxvt*cursorBlink: 1
+URxvt*cursorBlink: 0
 
+! Fading (works only when transparent is false)
 URxvt*fadeColor: gray
 URxvt.depth: 32
-URxvt.fading: 7
+URxvt.fading: 10
 
 ! Urgency hooks
 URxvt.urgentOnBell: true

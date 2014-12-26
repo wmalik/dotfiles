@@ -5,7 +5,6 @@
 
 " Plugins
     " git clone https://github.com/mileszs/ack.vim
-    " git clone git@github.com:dagwieers/asciidoc-vim.git
     " git clone https://github.com/kien/ctrlp.vim
     " git clone https://github.com/mattn/gist-vim
     " git clone https://github.com/vim-scripts/grep.vim
@@ -71,7 +70,7 @@ if has("gui_running")
     "
     " Set cursor color in different modes
     highlight Cursor guifg=black guibg=lightgreen
-    highlight iCursor guibg=red
+    highlight iCursor guibg=red ctermbg=red
     set guicursor=n-v-c:block-Cursor
     set guicursor+=i:ver25-iCursor
     set guicursor+=n-v-c:blinkon0
@@ -96,7 +95,6 @@ autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 set tw=80
-" Relative Line numbers
 set wildignore=*.o,*~,*.beam,*.swf,*.mp3,*.jpg,*.png,ebin
 if filereadable(".vimrc.project")
     so .vimrc.project
@@ -108,7 +106,8 @@ endif
 " shortcut to run a shell command and paste the output in a scratch buffer
 command! -nargs=* -complete=shellcmd R new | setlocal buftype=nofile bufhidden=hide noswapfile  | r !<args>
 " grep the word under cursor (case insensitive) in multiple directories
-nmap <leader>f :R grep -sirn <c-r>=expand("<cword> *")<cr> src include test script
+"nmap <leader>f :R grep -sirn <c-r>=expand("<cword> *")<cr> src include test script
+nmap <leader>f :R grep -sirn <c-r>=expand("<cword> *")<cr> .
 " shortcut to find a string in multiple src dirs, example :F something
 command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | set ft=erlang | r !grep -sirn --exclude=tags --exclude-dir=log --exclude-dir=ebin --exclude-dir=assets --exclude-dir=public <args> .
 " Open a scratch buffer
@@ -226,6 +225,13 @@ augroup filetype_erl
     autocmd FileType,BufNewFile,BufRead *rebar.config setlocal filetype=erlang
 augroup END
 
+augroup filetype_html
+    autocmd!
+    autocmd FileType,BufNewFile,BufRead *.mustache setlocal filetype=html
+    au FileType *.mustache setl sw=2 sts=2
+    au FileType html setl sw=2 sts=2
+augroup END
+
 
 
 
@@ -238,4 +244,8 @@ command! Ds set syntax=0
 command! Z tabnew %
 xnoremap . :norm.<CR>
 
-hi StatusLine ctermbg=white ctermfg=blue
+hi StatusLine ctermbg=white ctermfg=white
+
+" Move visual block
+vnoremap J :m '>+1<CR>gvgv
+vnoremap K :m '<-2<CR>gvgv
