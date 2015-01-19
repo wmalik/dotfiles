@@ -45,10 +45,9 @@ modMask' :: KeyMask
 modMask' = mod4Mask
 -- Define workspaces
 myWorkspaces    = ["1","2","3","4","5", "6", "7", "8", "9", "10"]
-myXmonadBar = "killall dzen2; dzen2 -x '2010' -y '0' -w '1500' -ta 'l'"
-myStatusBar = "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -x '750' -w '1500' -ta 'r' -y '0'"
-{-myTrayer = "killall trayer; trayer --edge bottom --align right --SetDockType false  --SetPartialStrut false  --expand true  --transparent true --tint 0x000000 --height 23 --widthtype request --alpha 150 &"-}
-myBitmapsDir = ".xmonad/bitmaps"
+myXmonadBar = "killall dzen2; dzen2 -x '0' -w '800' -ta 'l'"
+myStatusBar = "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -u -l 10 -sa 'r' -x '600' -ta 'r'"
+myBitmapsDir = ".xmonad/bitmaps/sm4"
 --
 -- Main
 main = do
@@ -201,12 +200,12 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask,		            xK_Escape   ), spawn "~/.local/piyaz/piyaz")
     , ((modMask .|. shiftMask,      xK_n        ), spawn "gvim --remote-tab-silent ~/.notes")
     , ((modMask,		            xK_s        ), spawn "keepassx")
-    , ((0,            xF86XK_ScreenSaver        ), spawn "xscreensaver-command -lock")
     , ((modMask .|. shiftMask,	    xK_l        ), spawn "xscreensaver-command -lock")
     , ((modMask .|. shiftMask,	    xK_m        ), spawn "spotify")
 
     -- Media Keys
-    , ((modMask,                    xK_0                    ), spawn "amixer -q sset Master toggle")  -- XF86AudioMute
+    , ((0,                          xF86XK_MonBrightnessDown   ), spawn "xbacklight -dec 5")
+    , ((0,                          xF86XK_MonBrightnessUp     ), spawn "xbacklight -inc 5")
     , ((0,                          xF86XK_AudioMute        ), spawn "amixer -q sset Master toggle")  -- XF86AudioMute
     , ((0,                          xF86XK_AudioLowerVolume ), spawn "amixer -q sset Master 5%-; notify-send -t 1000 `amixer get Master | egrep -o \"[0-9]+%\"` ")     -- XF86AudioLowerVolume
     , ((0,                          xF86XK_AudioRaiseVolume ), spawn "amixer -q sset Master 5%+; notify-send -t 1000 `amixer get Master | egrep -o \"[0-9]+%\"`")     -- XF86AudioRaiseVolume.
@@ -241,11 +240,11 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 
     -- quit, or restart
     , ((modMask,                   xK_c         ), spawn "killall -SIGUSR1 conky")
-    , ((modMask,                   xK_x         ), spawn "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -x '750' -w '1500' -ta 'r' -y '0'")
+    , ((modMask,                   xK_x         ), spawn "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -x '600' -ta 'r'")
     , ((modMask,                   xK_F1        ), spawn "~/.screenlayout/laptop.sh")
-    , ((modMask,                   xK_F2        ), spawn "~/.screenlayout/wooga.sh")
-    , ((modMask,                   xK_F3        ), spawn "~/.screenlayout/tv.sh")
-    --, ((modMask,                   xK_r         ), spawn "/usr/bin/xmonad --recompile && /usr/bin/xmonad --restart")
+    , ((modMask,                   xK_F2        ), spawn "~/.screenlayout/ga.sh")
+    , ((modMask,                   xK_F12       ), spawn "sudo pm-suspend-hybrid")
+    , ((modMask,                   xK_r         ), spawn "/usr/bin/xmonad --recompile && /usr/bin/xmonad --restart")
 
     -- cycle wallpaper
     , ((modMask,     xK_d         ), spawn "~/.xmonad/scripts/wall.sh") -- doesnt work

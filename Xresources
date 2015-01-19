@@ -105,7 +105,7 @@ URxvt.iso14755: False
 
 ! Other custom settings
 URxvt*loginShell: true
-URxvt.perl-ext-common:  default,matcher,font-size,keyboard-select
+URxvt.perl-ext-common:  default,matcher,font-size,keyboard-select,clipboard,url-select
 URxvt.url-launcher:     /usr/bin/chromium
 URxvt.matcher.button:   1
 URxvt.keysym.C-Up:     perl:font-size:increase
@@ -113,9 +113,11 @@ URxvt.keysym.C-Down:   perl:font-size:decrease
 URxvt.keysym.C-S-Up:   perl:font-size:incglobal
 URxvt.keysym.C-S-Down: perl:font-size:decglobal
 
+
 ! For keyboard-select
 URxvt.keysym.M-Escape: perl:keyboard-select:activate
 URxvt.clipboard.autocopy: true
+URxvt.keysym.M-u: perl:url-select:select_next
 
 ! Dzen2 settings
 dzen2.font:       neep-9

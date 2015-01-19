@@ -13,6 +13,7 @@ alias a='sudo aptitude'
 alias gvimm='gvim --remote-tab-silent'
 alias xm="vim ~/.xmonad/xmonad.hs"
 alias xr="vim ~/.Xresources"
+alias grep="grep --color"
 
 #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 PS1='\[\033[01;32m\][\u@\h \[\033[01;34m\]\W\[\033[01;32m\]]\[\033[01;34m\]\$\[\033[00m\] '

@@ -1,5 +1,7 @@
 xrdb -load ~/.Xresources
+xmodmap ~/.Xmodmap
 ~/.xmonad/scripts/wall.sh
-#xcompmgr -Cc -I-.9 -O-.9 -D1 -t-5 -l-5 -r4.2 -o.75 &
 xscreensaver -nosplash &
-volumeicon &
+skype &
+pidgin &
+urxvt -e tty-clock &

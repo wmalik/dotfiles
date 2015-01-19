@@ -17,15 +17,15 @@
     " git clone https://github.com/mattn/webapi-vim
 
 " Pathogen stuff {{{
-call pathogen#infect()
-call pathogen#incubate()
+call pathogen#infect('bundle/{}')
+"call pathogen#incubate()
 call pathogen#helptags()
 "}}}
 
 " Absolute essentials {{{
 set nocompatible	" Use Vim defaults instead of 100% vi compatibility
 set nofoldenable
-colorscheme Tomorrow-Night
+colorscheme atom
 syntax on
 filetype on
 filetype plugin on
@@ -44,7 +44,7 @@ set ttyfast
 set ruler
 set backspace=indent,eol,start
 set laststatus=2
-set nowrap
+set wrap
 set sidescroll=1
 set textwidth=80
 set formatoptions=qrn1
@@ -83,7 +83,7 @@ set incsearch
 set hlsearch
 
 set ignorecase
-set colorcolumn=80
+"set colorcolumn=80
 runtime! ftplugin/man.vim
 " searches for a tags file in the higher level directories until it is found
 " enables tag browsing no matter where the src is
@@ -105,11 +105,16 @@ endif
 
 " shortcut to run a shell command and paste the output in a scratch buffer
 command! -nargs=* -complete=shellcmd R new | setlocal buftype=nofile bufhidden=hide noswapfile  | r !<args>
+
 " grep the word under cursor (case insensitive) in multiple directories
-"nmap <leader>f :R grep -sirn <c-r>=expand("<cword> *")<cr> src include test script
-nmap <leader>f :R grep -sirn <c-r>=expand("<cword> *")<cr> .
+nmap <leader>f :R grep -sirn <c-r>=expand("<cword> *")<cr> .<cr> :set ft=sh<cr>
+
+" zoom the current buffer (aka open the current buffer in a new tab)
+nmap <leader>z :tabnew %<cr>
+
 " shortcut to find a string in multiple src dirs, example :F something
-command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | set ft=erlang | r !grep -sirn --exclude=tags --exclude-dir=log --exclude-dir=ebin --exclude-dir=assets --exclude-dir=public <args> .
+command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | set ft=erlang | r !grep -sirn --exclude=tags --exclude-dir=log --exclude-dir=ebin <args> .
+
 " Open a scratch buffer
 command! S new | setlocal buftype=nofile bufhidden=hide noswapfile
 command! T tabnew | setlocal buftype=nofile bufhidden=hide noswapfile
@@ -176,7 +181,9 @@ inoremap <C-u> <Esc>viwUea
 
 iabbrev adn and
 iabbrev @@ wmalik@gmail.com
-nnoremap <leader>ve :vsplit $MYVIMRC<cr>
+iabbrev ldeb lager:debug("", [])
+iabbrev ei error_logger:info_msg("", [])
+nnoremap <leader>ve :tabnew $MYVIMRC<cr>
 nnoremap <leader>vs :source ~/.vimrc<cr>
 
 " surround a word or a visual block with "" (doesnt work with v-line)
@@ -244,7 +251,7 @@ command! Ds set syntax=0
 command! Z tabnew %
 xnoremap . :norm.<CR>
 
-hi StatusLine ctermbg=white ctermfg=white
+"hi StatusLine ctermbg=white ctermfg=white
 
 " Move visual block
 vnoremap J :m '>+1<CR>gvgv
