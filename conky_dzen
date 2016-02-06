@@ -1,20 +1,25 @@
 # Author: Wasif Malik (wmalik@gmail.com)
 
 background yes
-#alignment bottom_right
 out_to_console yes
 out_to_x no
-update_interval 3
+update_interval 2
 short_units
+if_up_strictness address
+cpu_avg_samples 4
+#use_spacer left
 
 # Conditional warning template
 template0 ${if_match \1 \2 \3}\4${endif}
 
 TEXT
-^fg(Gray)${texeci 50 curl ifconfig.me} \
+^fg(Black)^bg(LightGray)${texeci 300 wget http://ipinfo.io/ip -qO -}^fg()^bg() \
 ^bg(DarkBlue)${freq_g} GHz^bg() \
+^bg(Black)Swap: ${swap} \
+^fg(White)^bg(Black)Cached:${cached} \
+^fg(White)^bg(Black)Buffered:${buffers} \
 ${if_mounted /mnt}\
-^fg(Orange)Mounted /mnt^fg() \
+^fg(Orange)Mounted ^fg() \
 ${endif}\
 ^bg(Dark Slate Gray)\
  Load \
@@ -22,13 +27,13 @@ ${endif}\
 ^fg(LightGreen)${loadavg 2} \
 ^fg(LightPink)${loadavg 3}\
 ^bg() \
-^ca(1, urxvt -e htop)\
+^ca(1, urxvt -e top)\
 ^fg(Dodger Blue)R:^fg(Dark Gray)${diskio_read} ^fg(Sea Green)W:^fg(Dark Gray)${diskio_write} \
 ^ca()\
 ${template0 ${acpitemp} > 55 ^fg(White)^bg(Red)Hot:\ ${acpitemp}\ }\
 ${template0 ${tcp_portmon\ 22\ 22\ count} > 0 ^fg(White)^bg(Red)SSH}\
 ${template0 ${fs_free_perc} < 5 ^fg(Black)^bg(Orange)\ ${fs_free}\ }\
-${if_gw eth0}\
+${if_up eth0}\
 ^ca(1, urxvt -e wicd-curses)\
 ^bg(Dark Green)^fg() eth0 ^bg(Dark Slate Gray) ${addr eth0} \
 ^ca()\
@@ -47,7 +52,7 @@ ${if_up wlan0}\
 ^fg(yellow)^i($HOME/.xmonad/bitmaps/sm4/xbm/net_down_01.xbm) ^fg()${downspeed wlan0} \
 ^ca()\
 ${endif} \
-^ca(1, urxvt -e htop)\
+^ca(1, urxvt -e top)\
 ^bg(Golden Rod)^fg(Steel Blue)^i($HOME/.xmonad/bitmaps/sm4/xbm/mem.xbm)^fg(black)${memperc}% \
 ^fg(Steel Blue)^i($HOME/.xmonad/bitmaps/sm4/xbm/cpu.xbm)^fg(black)${cpu}% \
 ^ca()\

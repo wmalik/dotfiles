@@ -34,7 +34,12 @@
     today = diff --stat @{12am}..HEAD
     total = !git log --pretty=oneline | wc -l
 	d = difftool
-    hub = !echo "https://github.com/`git config remote.origin.url`" | sed "s/git@github.com://g" | xargs chromium
+    hub = !echo "https://github.com/`git config remote.origin.url`" | sed "s/git@github.com://g" | xargs sensible-browser
     url =!sh -c 'HEAD=`git rev-parse HEAD` && SHA1=`[ "$0" = "sh" ] && echo $HEAD || echo $0` && echo `git hub`"/commit/"${SHA1i}'
+    travis = !git remote -v | grep push | awk '{print $2}' | awk -F: '{print $2}' | awk -F. '{print abc}'
+    prom = pull --rebase origin master
 [diff]
 	tool = vimdiff
+[merge]
+    ;tool = mymeld
+    ;conflictstyle = diff3

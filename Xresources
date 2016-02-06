@@ -63,34 +63,6 @@ urxvt*background: black
 urxvt*transparent: true
 urxvt*shading: 8
 
-!URxvt*background: Black
-!URxvt*foreground: Gainsboro
-!
-!!black
-!URxvt*color0:  #251f1f
-!URxvt*color8:  #5e5e5e
-!!red
-!URxvt*color1:  #eb4509
-!URxvt*color9:  #eb4509
-!!green
-!URxvt*color2:  SeaGreen
-!URxvt*color10: SeaGreen
-!!yellow
-!URxvt*color3:  #ffac18
-!URxvt*color11: #ffac18
-!!blue
-!URxvt*color4:  SlateBlue2
-!URxvt*color12: SlateBlue2
-!!magenta
-!URxvt*color5:  Yellow
-!URxvt*color13: Yellow
-!!cyan
-!URxvt*color6:  DarkCyan
-!URxvt*color14: DarkCyan
-!!white
-!URxvt*color7:  #efefef
-!URxvt*color15: #efefef
-
 URxvt*cursorColor: green
 URxvt*cursorBlink: 0
 
@@ -106,12 +78,14 @@ URxvt.iso14755: False
 ! Other custom settings
 URxvt*loginShell: true
 URxvt.perl-ext-common:  default,matcher,font-size,keyboard-select,clipboard,url-select
-URxvt.url-launcher:     /usr/bin/chromium
+URxvt.url-launcher:     /usr/bin/sensible-browser
 URxvt.matcher.button:   1
 URxvt.keysym.C-Up:     perl:font-size:increase
 URxvt.keysym.C-Down:   perl:font-size:decrease
 URxvt.keysym.C-S-Up:   perl:font-size:incglobal
 URxvt.keysym.C-S-Down: perl:font-size:decglobal
+URxvt.keysym.Shift-Up: command:\033]720;1\007
+URxvt.keysym.Shift-Down: command:\033]721;1\007
 
 
 ! For keyboard-select
@@ -123,3 +97,14 @@ URxvt.keysym.M-u: perl:url-select:select_next
 dzen2.font:       neep-9
 dzen2.foreground: white
 dzen2.background: black
+
+
+! For HiDPI displays
+!Xft.dpi: 180
+!Xft.dpi: 140
+Xft.autohint: 0
+Xft.lcdfilter:  lcddefault
+Xft.hintstyle:  hintfull
+Xft.hinting: 1
+Xft.antialias: 1
+Xft.rgba: rgb

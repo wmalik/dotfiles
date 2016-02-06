@@ -25,7 +25,8 @@ call pathogen#helptags()
 " Absolute essentials {{{
 set nocompatible	" Use Vim defaults instead of 100% vi compatibility
 set nofoldenable
-colorscheme atom
+"colorscheme jellybeans
+colorscheme distinguished
 syntax on
 filetype on
 filetype plugin on
@@ -49,7 +50,8 @@ set sidescroll=1
 set textwidth=80
 set formatoptions=qrn1
 set listchars=tab:▸\ ,eol:¬
-set number
+set rnu
+set nu
 set smartcase
 set showmatch
 set noantialias
@@ -79,11 +81,11 @@ if has("gui_running")
 endif
 
 set directory=/tmp "this is to store all sw* files in /tmp
-set incsearch
+set noincsearch
 set hlsearch
 
 set ignorecase
-"set colorcolumn=80
+set colorcolumn=80
 runtime! ftplugin/man.vim
 " searches for a tags file in the higher level directories until it is found
 " enables tag browsing no matter where the src is
@@ -113,7 +115,8 @@ nmap <leader>f :R grep -sirn <c-r>=expand("<cword> *")<cr> .<cr> :set ft=sh<cr>
 nmap <leader>z :tabnew %<cr>
 
 " shortcut to find a string in multiple src dirs, example :F something
-command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | set ft=erlang | r !grep -sirn --exclude=tags --exclude-dir=log --exclude-dir=ebin <args> .
+"command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | set ft=erlang | r !grep -sirn --exclude=tags --exclude-dir=log --exclude-dir=ebin <args> .
+command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | set ft=erlang | r !ag --vimgrep <args>
 
 " Open a scratch buffer
 command! S new | setlocal buftype=nofile bufhidden=hide noswapfile
@@ -128,7 +131,7 @@ nnoremap <leader>d :r! date \+\[\%Y-\%m-\%d\ \%H:\%M:\%S\]<cr>
 
 
 let mapleader = ","
-inoremap jk <Esc>
+"inoremap jk <Esc>
 nnoremap <leader>w <C-w>v<C-w>l
 nnoremap <C-j> <C-w>w
 nnoremap <C-k> <C-w>W
@@ -158,7 +161,7 @@ nnoremap <leader>B 2F<d2f>i
 "ignore binary files
 " remove trailing whitespace and save the file
 nnoremap <leader><Space> $x<Esc>:w<CR>
-let g:erlangManPath = "/usr/share/man/man1"
+"let g:erlangManPath = "/usr/share/man/man1"
 "let g:erlangHighlightErrors = 0
 "let g:erlangHighlightBif = 1
 command! Er set ft=erlang
@@ -168,7 +171,6 @@ command! Er set ft=erlang
 let g:CommandTMaxHeight=10
 "}}}
 
-" Steve Losh Learning Vimscript the Hard Way
 " move a line upward or downward
 nnoremap - ddp
 nnoremap _ ddkP
@@ -183,6 +185,10 @@ iabbrev adn and
 iabbrev @@ wmalik@gmail.com
 iabbrev ldeb lager:debug("", [])
 iabbrev ei error_logger:info_msg("", [])
+iabbrev ew error_logger:warning_msg("", [])
+iabbrev ee error_logger:error_msg("", [])
+"iabbrev pgv proplists:get_value(
+
 nnoremap <leader>ve :tabnew $MYVIMRC<cr>
 nnoremap <leader>vs :source ~/.vimrc<cr>
 
@@ -227,9 +233,15 @@ nnoremap <leader>ct :!ctags -R --exclude=assets *<cr>
 augroup filetype_erl
     autocmd!
     autocmd FileType,BufNewFile,BufRead escript setlocal filetype=erlang
-    autocmd FileType,BufNewFile,BufRead app.src setlocal filetype=erlang
-    autocmd FileType,BufNewFile,BufRead abtests setlocal filetype=erlang
-    autocmd FileType,BufNewFile,BufRead *rebar.config setlocal filetype=erlang
+    autocmd FileType,BufNewFile,BufRead *.app.src setlocal filetype=erlang
+    autocmd FileType,BufNewFile,BufRead rebar.config setlocal filetype=erlang
+    autocmd FileType,BufNewFile,BufRead *.term setlocal filetype=erlang
+    command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | set ft=erlang | r !grep -sirn --exclude=tags --exclude-dir=log --exclude-dir=.eunit --exclude-dir=.git --exclude-dir=ebin <args> .
+    nnoremap <leader>ct :ErlangTags<cr>
+    command! -nargs=1 Erl Man 3erl <args>
+    nnoremap <leader>ei yiwoerror_logger:info_msg("<esc>pa ~p~n", [<esc>pa]),<esc>
+    vnoremap <leader>ei "myoerror_logger:info_msg("<esc>"mpa ~p~n", [<esc>"mpa]),<esc>
+
 augroup END
 
 augroup filetype_html
@@ -256,3 +268,20 @@ xnoremap . :norm.<CR>
 " Move visual block
 vnoremap J :m '>+1<CR>gvgv
 vnoremap K :m '<-2<CR>gvgv
+
+let g:ref_use_vimproc = 1
+let g:ref_open = 'split'
+let g:ref_cache_dir = expand($TMP . '/vim_ref_cache/')
+nno <leader>K :<C-u>Unite ref/erlang
+            \ -vertical -default-action=split<CR>
+
+
+let &colorcolumn=join(range(&tw,999),",")
+nnoremap & /^<C-r><C-w><cr>
+
+
+au FocusLost * :wa
+":au FocusLost * silent! wa
+set autowrite
+set autowriteall
+

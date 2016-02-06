@@ -45,16 +45,19 @@ modMask' :: KeyMask
 modMask' = mod4Mask
 -- Define workspaces
 myWorkspaces    = ["1","2","3","4","5", "6", "7", "8", "9", "10"]
+{-myXmonadBar = "killall dzen2; dzen2 -y -1 -x '0' -ta 'l' -xs 1"-}
+{-myXmonadBar = "killall dzen2; dzen2 -x '0' -ta 'l'"-}
 myXmonadBar = "killall dzen2; dzen2 -x '0' -w '800' -ta 'l'"
-myStatusBar = "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -u -l 10 -sa 'r' -x '600' -ta 'r'"
-myBitmapsDir = ".xmonad/bitmaps/sm4"
+myStatusBar = "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -ta 'r'"
+{-myStatusBar = "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -u -l 10 -sa 'r' -x '600' -ta 'r'"-}
+myBitmapsDir = ".xmonad/bitmaps/"
 --
 -- Main
 main = do
     dzenLeftBar <- spawnPipe myXmonadBar
     dzenRightBar <- spawnPipe myStatusBar
     -- midTrayer <- spawnPipe myTrayer
-    xmonad $ withUrgencyHookC dzenUrgencyHook { args = ["-bg", "red", "fg", "black", "-xs", "1", "-y", "25"] } urgencyConfig { remindWhen = Every 15 } $ defaultConfig
+    xmonad $ withUrgencyHookC dzenUrgencyHook { args = ["-bg", "red", "fg", "black", "-y", "25"] } urgencyConfig { remindWhen = Every 15 } $ defaultConfig
       { workspaces          = myWorkspaces
       , keys                = keys'
       , modMask             = modMask'
@@ -84,6 +87,7 @@ manageHook' = (composeAll . concat $
     , [className    =? c            --> doShift  "3"    |   c   <- myVim    ] -- move vim to vim
     , [className    =? c            --> doShift	 "4"   |   c   <- myPidgin  ]
     , [className    =? c            --> doShift	 "4"   |   c   <- mySkype  ]
+    , [className    =? c            --> doShift	 "9"   |   c   <- myToys  ]
     , [className    =? c            --> doCenterFloat       |   c   <- myFloats ] -- float my floats
     , [name         =? n            --> doCenterFloat       |   n   <- myNames  ] -- float my names
     , [isFullscreen                 --> myDoFullFloat                           ]
@@ -101,6 +105,7 @@ manageHook' = (composeAll . concat $
         mySkype	  = ["Skype", "skype"]
         myDev	  = ["urxvt"]
         myVim	  = ["Gvim"]
+        myToys	  = ["Conky"]
 
         -- resources
         -- xprop | grep WM_CLASS
@@ -135,7 +140,7 @@ myLogHook h = dynamicLogWithPP $ defaultPP
                                     "Full"                   -> "^i(" ++ myBitmapsDir ++ "/full.xbm)"
                                     _                        -> x
                                 )
-      , ppTitle             =   dzenColor "white" "MidnightBlue" . dzenEscape . (" "++) . (++" ")
+      , ppTitle             =   dzenColor "white" "black" . dzenEscape . (" "++) . (++" ")
       , ppOutput            =   hPutStrLn h
     }
 
@@ -189,65 +194,65 @@ largeXPConfig = mXPConfig
 -- Key mapping {{{
 keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     [
-      ((modMask,                    xK_p        ), runOrRaisePrompt largeXPConfig)
-    , ((modMask .|. shiftMask,      xK_Return   ), spawn $ XMonad.terminal conf)
-    , ((modMask,                    xK_q        ), kill)
-    , ((modMask .|. shiftMask,      xK_c        ), kill)
+      ((modMask,                    xK_p     ), runOrRaisePrompt largeXPConfig)
+    , ((modMask .|. shiftMask,      xK_Return), spawn $ XMonad.terminal conf)
+    , ((modMask,                    xK_d     ), kill)
+    , ((modMask .|. shiftMask,      xK_c     ), kill)
 
     -- Programs
-    , ((modMask,                    xK_Print    ), spawn "cd ~/screenshots; scrot -t 20 -e 'notify-send -t 1000 $f'")
-    , ((modMask,		            xK_o        ), spawn "firefox")
-    , ((modMask,		            xK_Escape   ), spawn "~/.local/piyaz/piyaz")
-    , ((modMask .|. shiftMask,      xK_n        ), spawn "gvim --remote-tab-silent ~/.notes")
-    , ((modMask,		            xK_s        ), spawn "keepassx")
-    , ((modMask .|. shiftMask,	    xK_l        ), spawn "xscreensaver-command -lock")
-    , ((modMask .|. shiftMask,	    xK_m        ), spawn "spotify")
+    , ((modMask,                    xK_Print ), spawn "cd ~/screenshots; scrot -t 20 -e 'notify-send -t 1000 $f'")
+    , ((modMask,		            xK_o     ), spawn "firefox")
+    , ((modMask,		            xK_Escape), spawn "~/.local/piyaz/piyaz")
+    , ((modMask .|. shiftMask,      xK_n     ), spawn "gvim --remote-tab-silent ~/.notes")
+    , ((modMask,		            xK_s     ), spawn "keepassx")
+    , ((modMask .|. shiftMask,	    xK_l     ), spawn "xscreensaver-command -lock")
+    , ((modMask .|. shiftMask,	    xK_m     ), spawn "spotify")
 
     -- Media Keys
-    , ((0,                          xF86XK_MonBrightnessDown   ), spawn "xbacklight -dec 5")
-    , ((0,                          xF86XK_MonBrightnessUp     ), spawn "xbacklight -inc 5")
+    , ((0,                          xF86XK_MonBrightnessDown), spawn "xbacklight -dec 5")
+    , ((0,                          xF86XK_MonBrightnessUp  ), spawn "xbacklight -inc 5")
     , ((0,                          xF86XK_AudioMute        ), spawn "amixer -q sset Master toggle")  -- XF86AudioMute
-    , ((0,                          xF86XK_AudioLowerVolume ), spawn "amixer -q sset Master 5%-; notify-send -t 1000 `amixer get Master | egrep -o \"[0-9]+%\"` ")     -- XF86AudioLowerVolume
-    , ((0,                          xF86XK_AudioRaiseVolume ), spawn "amixer -q sset Master 5%+; notify-send -t 1000 `amixer get Master | egrep -o \"[0-9]+%\"`")     -- XF86AudioRaiseVolume.
+    , ((0,                          xF86XK_AudioLowerVolume ), spawn "amixer -q sset Master 5%-; notify-send -t 1000 `amixer get Master | egrep -o \"[0-9]+%\"` ") -- XF86AudioLowerVolume
+    , ((0,                          xF86XK_AudioRaiseVolume ), spawn "amixer -q sset Master 5%+; notify-send -t 1000 `amixer get Master | egrep -o \"[0-9]+%\"`")  -- XF86AudioRaiseVolume.
     , ((modMask,                    xK_Down                 ), spawn "amixer -q sset Master 5%-")
     , ((modMask,                    xK_Up                   ), spawn "amixer -q sset Master 5%+")
 
     -- layouts
-    , ((modMask,                    xK_space    ), sendMessage NextLayout)
-    , ((modMask .|. shiftMask,      xK_space    ), setLayout $ XMonad.layoutHook conf)          -- reset layout on current desktop to default
-    , ((modMask,                    xK_b        ), sendMessage ToggleStruts)
-    , ((modMask,                    xK_n        ), refresh)
-    , ((modMask,                    xK_Tab      ), windows W.focusDown)                         -- move focus to next window
-    , ((modMask,                    xK_j        ), windows W.focusDown)
-    , ((modMask,                    xK_k        ), windows W.focusUp  )
-    , ((modMask .|. shiftMask,      xK_j        ), windows W.swapDown)                          -- swap the focused window with the next window
-    , ((modMask .|. shiftMask,      xK_k        ), windows W.swapUp)                            -- swap the focused window with the previous window
-    , ((modMask,                    xK_Return   ), windows W.swapMaster)
-    , ((modMask,                    xK_t        ), withFocused $ windows . W.sink)              -- Push window back into tiling
-    , ((modMask,                    xK_h        ), sendMessage Shrink)                          -- %! Shrink a master area
-    , ((modMask,                    xK_l        ), sendMessage Expand)                          -- %! Expand a master area
-    , ((modMask,                    xK_comma    ), sendMessage (IncMasterN 1))                  -- Increment the number of windows in the master area
-    , ((modMask,                    xK_period   ), sendMessage (IncMasterN (-1)))               -- Deincrement the number of windows in the master area
+    , ((modMask,                    xK_space ), sendMessage NextLayout)
+    , ((modMask .|. shiftMask,      xK_space ), setLayout $ XMonad.layoutHook conf)          -- reset layout on current desktop to default
+    , ((modMask,                    xK_b     ), sendMessage ToggleStruts)
+    , ((modMask,                    xK_n     ), refresh)
+    , ((modMask,                    xK_Tab   ), windows W.focusDown)                         -- move focus to next window
+    , ((modMask,                    xK_j     ), windows W.focusDown)
+    , ((modMask,                    xK_k     ), windows W.focusUp  )
+    , ((modMask .|. shiftMask,      xK_j     ), windows W.swapDown)                          -- swap the focused window with the next window
+    , ((modMask .|. shiftMask,      xK_k     ), windows W.swapUp)                            -- swap the focused window with the previous window
+    , ((modMask,                    xK_Return), windows W.swapMaster)
+    , ((modMask,                    xK_t     ), withFocused $ windows . W.sink)              -- Push window back into tiling
+    , ((modMask,                    xK_h     ), sendMessage Shrink)                          -- %! Shrink a master area
+    , ((modMask,                    xK_l     ), sendMessage Expand)                          -- %! Expand a master area
+    , ((modMask,                    xK_comma ), sendMessage (IncMasterN 1))                  -- Increment the number of windows in the master area
+    , ((modMask,                    xK_period), sendMessage (IncMasterN (-1)))               -- Deincrement the number of windows in the master area
 
     --Urgency hooks
     , ((modMask,                    xK_BackSpace), focusUrgent)
 
     -- workspaces
-    , ((modMask .|. controlMask,   xK_Right     ), nextWS)
-    , ((modMask .|. shiftMask,     xK_Right     ), shiftToNext)
-    , ((modMask .|. controlMask,   xK_Left      ), prevWS)
-    , ((modMask .|. shiftMask,     xK_Left      ), shiftToPrev)
+    , ((modMask .|. controlMask,   xK_Right), nextWS)
+    , ((modMask .|. shiftMask,     xK_Right), shiftToNext)
+    , ((modMask .|. controlMask,   xK_Left ), prevWS)
+    , ((modMask .|. shiftMask,     xK_Left ), shiftToPrev)
 
     -- quit, or restart
-    , ((modMask,                   xK_c         ), spawn "killall -SIGUSR1 conky")
-    , ((modMask,                   xK_x         ), spawn "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -x '600' -ta 'r'")
-    , ((modMask,                   xK_F1        ), spawn "~/.screenlayout/laptop.sh")
-    , ((modMask,                   xK_F2        ), spawn "~/.screenlayout/ga.sh")
-    , ((modMask,                   xK_F12       ), spawn "sudo pm-suspend-hybrid")
-    , ((modMask,                   xK_r         ), spawn "/usr/bin/xmonad --recompile && /usr/bin/xmonad --restart")
+    , ((modMask,                   xK_c    ), spawn "killall -SIGUSR1 conky")
+    , ((modMask,                   xK_x    ), spawn "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -ta 'r'")
+    , ((modMask,                   xK_F1   ), spawn "~/.screenlayout/laptop.sh")
+    , ((modMask,                   xK_F2   ), spawn "~/.screenlayout/ga.sh")
+    , ((modMask,                   xK_F12  ), spawn "sudo pm-suspend-hybrid")
+    , ((modMask,                   xK_r    ), spawn "/usr/bin/xmonad --recompile && /usr/bin/xmonad --restart")
 
     -- cycle wallpaper
-    , ((modMask,     xK_d         ), spawn "~/.xmonad/scripts/wall.sh") -- doesnt work
+    {-, ((modMask,     xK_d         ), spawn "~/.xmonad/scripts/wall.sh") -- doesnt work-}
     ]
     ++
     -- mod-[1..9] %! Switch to workspace N
