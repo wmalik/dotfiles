@@ -11,6 +11,8 @@ import XMonad.Operations
 import System.IO
 import System.Exit
 import XMonad.Util.Run
+import XMonad.Util.Paste
+import XMonad.Util.Loggers
 import XMonad.Actions.CycleWS
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
@@ -38,6 +40,7 @@ import qualified XMonad.StackSet as W
 import qualified Data.Map as M
 
 import XMonad.Actions.UpdatePointer
+
 -- Config
 -- Define Terminal
 -- Define modMask
@@ -45,11 +48,8 @@ modMask' :: KeyMask
 modMask' = mod4Mask
 -- Define workspaces
 myWorkspaces    = ["1","2","3","4","5", "6", "7", "8", "9", "10"]
-{-myXmonadBar = "killall dzen2; dzen2 -y -1 -x '0' -ta 'l' -xs 1"-}
-{-myXmonadBar = "killall dzen2; dzen2 -x '0' -ta 'l'"-}
-myXmonadBar = "killall dzen2; dzen2 -x '0' -w '800' -ta 'l'"
-myStatusBar = "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -ta 'r'"
-{-myStatusBar = "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -u -l 10 -sa 'r' -x '600' -ta 'r'"-}
+myXmonadBar = "killall dzen2; dzen2 -ta 'l' -tw 600 -e"
+myStatusBar = "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -xs 2 -ta 'r' -e"
 myBitmapsDir = ".xmonad/bitmaps/"
 --
 -- Main
@@ -60,22 +60,29 @@ main = do
     xmonad $ withUrgencyHookC dzenUrgencyHook { args = ["-bg", "red", "fg", "black", "-y", "25"] } urgencyConfig { remindWhen = Every 15 } $ defaultConfig
       { workspaces          = myWorkspaces
       , keys                = keys'
+      , startupHook         = setWMName "LG3D"
       , modMask             = modMask'
-      -- , layoutHook          = layoutHook'
-      -- , layoutHook          = myLayout
       , layoutHook          = customLayout
       , manageHook          = manageHook'
-      , logHook             = myLogHook dzenLeftBar >> fadeInactiveLogHook 0xdddddddd >> updatePointer (Relative 0.9 0.9)
+      , logHook             = myLogHook dzenLeftBar >> fadeInactiveLogHook 0xdddddddd >> updatePointer (0.95, 0.95) (0, 0)
       , normalBorderColor   = colorNormalBorder
       , focusedBorderColor  = colorFocusedBorder
-      , borderWidth         = 2
+      , borderWidth         = 1
       , handleEventHook     = fullscreenEventHook --for chrome full screen-- {{{-- }}}
-      , startupHook         = spawn "~/.xmonad/scripts/on-start.sh"
+      {-, startupHook         = spawn "~/.xmonad/scripts/on-start.sh"-}
       , terminal            = "urxvt"
       , focusFollowsMouse   = False
+      , mouseBindings   = myMouseBindings
 }
 --}}}
 
+myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
+    [ ((0, 8), (\w -> windows W.focusDown)) -- useful when cycling through windows in a full screen layout
+    , ((0, 9), (\w -> toggleWS)) -- cycle between current and last used workspace
+    , ((0, 6), (\w -> spawn "notify-send -t 5000 \"`/usr/bin/yubioath || echo 'No yubikey?'`\""))
+    , ((0, 7), (\w -> spawn "notify-send -t 5000 \"`curl ipinfo.io/ip || echo 'Got net?'`\""))
+    -- you may also bind events to the mouse scroll wheel (button4 and button5)
+    ]
 
 -- Hooks {{{
 -- ManageHook {{{
@@ -86,7 +93,6 @@ manageHook' = (composeAll . concat $
     , [className    =? c            --> doShift  "2"    |   c   <- myWebs   ] -- move webs to main
     , [className    =? c            --> doShift  "3"    |   c   <- myVim    ] -- move vim to vim
     , [className    =? c            --> doShift	 "4"   |   c   <- myPidgin  ]
-    , [className    =? c            --> doShift	 "4"   |   c   <- mySkype  ]
     , [className    =? c            --> doShift	 "9"   |   c   <- myToys  ]
     , [className    =? c            --> doCenterFloat       |   c   <- myFloats ] -- float my floats
     , [name         =? n            --> doCenterFloat       |   n   <- myNames  ] -- float my names
@@ -100,9 +106,8 @@ manageHook' = (composeAll . concat $
         name      = stringProperty "WM_NAME"
 
         -- classnames
-        myWebs    = ["Firefox","Google-chrome","Chromium", "Chromium-browser","Iceweasel","iceweasel"]
-        myPidgin  = ["Pidgin","Buddy List", "chat"]
-        mySkype	  = ["Skype", "skype"]
+        myWebs    = ["Firefox", "Firefox-esr", "Google-chrome","Chromium", "Chromium-browser","Iceweasel","iceweasel"]
+        myPidgin  = ["Pidgin","Buddy List", "chat", "Slack", "Skype", "skype"]
         myDev	  = ["urxvt"]
         myVim	  = ["Gvim"]
         myToys	  = ["Conky"]
@@ -127,12 +132,14 @@ myLogHook :: Handle -> X ()
 myLogHook h = dynamicLogWithPP $ defaultPP
     {
         ppCurrent           =   dzenColor "white" "ForestGreen" . pad
-      , ppVisible           =   dzenColor "white" "black" . pad
+      , ppVisible           =   dzenColor "white" "blue" . pad
       , ppHidden            =   dzenColor "white" "black" . pad
       , ppHiddenNoWindows   =   dzenColor "#3D3D3D" "black" . pad
       , ppUrgent            =   dzenColor "black" "red" . pad
       , ppWsSep             =   " "
       , ppSep               =   " | "
+      {-, ppExtras = [wrapL "[" "]" $ date "%a %d %b"]-}
+      {-, ppExtras = [wrapL "[" "]" $ dzenColorL "green" "#2A4C3F" (logCmd "wget http://ipinfo.io/ip -qO -")]-}
       , ppLayout            =   dzenColor "#ebac54" "black" .
                                 (\x -> case x of
                                     "Spacing 3 Tall"         -> "^i(" ++ myBitmapsDir ++ "/tall.xbm)"
@@ -140,7 +147,7 @@ myLogHook h = dynamicLogWithPP $ defaultPP
                                     "Full"                   -> "^i(" ++ myBitmapsDir ++ "/full.xbm)"
                                     _                        -> x
                                 )
-      , ppTitle             =   dzenColor "white" "black" . dzenEscape . (" "++) . (++" ")
+      , ppTitle             =   dzenColor "black" "gray" . dzenEscape . (" "++) . (++" ")
       , ppOutput            =   hPutStrLn h
     }
 
@@ -163,7 +170,7 @@ colorYellow         = "#E6DB74"
 colorWhite          = "#CCCCC6"
 
 colorNormalBorder   = "black"
-colorFocusedBorder  = "red"
+colorFocusedBorder  = "white"
 
 
 barFont  = "inconsolata"
@@ -198,22 +205,26 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask .|. shiftMask,      xK_Return), spawn $ XMonad.terminal conf)
     , ((modMask,                    xK_d     ), kill)
     , ((modMask .|. shiftMask,      xK_c     ), kill)
+    , ((0,                          xK_Insert), pasteSelection)
+    , ((modMask,                    xK_Tab     ), toggleWS)
+    , ((modMask,                    xK_n     ), spawn "urxvt -e wicd-curses")
+    , ((modMask,                    xK_v     ), spawn "urxvt -e bash -c 'echo $HOSTNAME'")
 
     -- Programs
-    , ((modMask,                    xK_Print ), spawn "cd ~/screenshots; scrot -t 20 -e 'notify-send -t 1000 $f'")
+    , ((modMask,                    xK_Print ), spawn "cd ~/screenshots; scrot -e 'notify-send -t 2000 $f --icon=/home/arthur/screenshots/$f'")
+    , ((modMask .|. shiftMask,      xK_Print ), spawn "cd ~/screenshots; scrot -u -e 'notify-send -t 2000 $f --icon=/home/arthur/screenshots/$f'")
     , ((modMask,		            xK_o     ), spawn "firefox")
-    , ((modMask,		            xK_Escape), spawn "~/.local/piyaz/piyaz")
-    , ((modMask .|. shiftMask,      xK_n     ), spawn "gvim --remote-tab-silent ~/.notes")
-    , ((modMask,		            xK_s     ), spawn "keepassx")
+    , ((modMask .|. shiftMask,		xK_o     ), spawn "firefox --private-window")
+    , ((modMask,		            xK_s     ), spawn "keepass2")
+    , ((modMask,		            xK_y     ), spawn "pkill -9 yubioath-gui; yubioath-gui")
     , ((modMask .|. shiftMask,	    xK_l     ), spawn "xscreensaver-command -lock")
-    , ((modMask .|. shiftMask,	    xK_m     ), spawn "spotify")
 
     -- Media Keys
     , ((0,                          xF86XK_MonBrightnessDown), spawn "xbacklight -dec 5")
     , ((0,                          xF86XK_MonBrightnessUp  ), spawn "xbacklight -inc 5")
     , ((0,                          xF86XK_AudioMute        ), spawn "amixer -q sset Master toggle")  -- XF86AudioMute
-    , ((0,                          xF86XK_AudioLowerVolume ), spawn "amixer -q sset Master 5%-; notify-send -t 1000 `amixer get Master | egrep -o \"[0-9]+%\"` ") -- XF86AudioLowerVolume
-    , ((0,                          xF86XK_AudioRaiseVolume ), spawn "amixer -q sset Master 5%+; notify-send -t 1000 `amixer get Master | egrep -o \"[0-9]+%\"`")  -- XF86AudioRaiseVolume.
+    , ((0,                          xF86XK_AudioLowerVolume ), spawn "amixer -q sset Master 5%-; notify-send -t 100 `amixer get Master | egrep -o \"[0-9]+%\"` ") -- XF86AudioLowerVolume
+    , ((0,                          xF86XK_AudioRaiseVolume ), spawn "amixer -q sset Master 5%+; notify-send -t 100 `amixer get Master | egrep -o \"[0-9]+%\"`")  -- XF86AudioRaiseVolume.
     , ((modMask,                    xK_Down                 ), spawn "amixer -q sset Master 5%-")
     , ((modMask,                    xK_Up                   ), spawn "amixer -q sset Master 5%+")
 
@@ -221,8 +232,8 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask,                    xK_space ), sendMessage NextLayout)
     , ((modMask .|. shiftMask,      xK_space ), setLayout $ XMonad.layoutHook conf)          -- reset layout on current desktop to default
     , ((modMask,                    xK_b     ), sendMessage ToggleStruts)
-    , ((modMask,                    xK_n     ), refresh)
-    , ((modMask,                    xK_Tab   ), windows W.focusDown)                         -- move focus to next window
+    -- , ((modMask,                    xK_n     ), refresh)
+    , ((modMask,                    xK_z     ), windows W.focusDown)
     , ((modMask,                    xK_j     ), windows W.focusDown)
     , ((modMask,                    xK_k     ), windows W.focusUp  )
     , ((modMask .|. shiftMask,      xK_j     ), windows W.swapDown)                          -- swap the focused window with the next window
@@ -245,14 +256,16 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 
     -- quit, or restart
     , ((modMask,                   xK_c    ), spawn "killall -SIGUSR1 conky")
-    , ((modMask,                   xK_x    ), spawn "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -ta 'r'")
+    , ((modMask,                   xK_x    ), spawn "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -xs 2 -ta 'r' -e 'onstart=lower'")
     , ((modMask,                   xK_F1   ), spawn "~/.screenlayout/laptop.sh")
-    , ((modMask,                   xK_F2   ), spawn "~/.screenlayout/ga.sh")
+    , ((modMask,                   xK_F2   ), spawn "~/.screenlayout/work.sh")
+    , ((modMask,                   xK_F3   ), spawn "~/.screenlayout/work_mirror.sh")
     , ((modMask,                   xK_F12  ), spawn "sudo pm-suspend-hybrid")
     , ((modMask,                   xK_r    ), spawn "/usr/bin/xmonad --recompile && /usr/bin/xmonad --restart")
-
-    -- cycle wallpaper
-    {-, ((modMask,     xK_d         ), spawn "~/.xmonad/scripts/wall.sh") -- doesnt work-}
+    , ((modMask,               xK_Down),  nextWS)
+    , ((modMask,               xK_Up),    prevWS)
+    , ((modMask .|. shiftMask, xK_Down),  shiftToNext)
+    , ((modMask .|. shiftMask, xK_Up),    shiftToPrev)
     ]
     ++
     -- mod-[1..9] %! Switch to workspace N
@@ -265,7 +278,6 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     --
     -- mod-{w,e,r}, Switch to physical/Xinerama screens 1, 2, or 3
     -- mod-shift-{w,e,r}, Move client to screen 1, 2, or 3
---
     [((m .|. modMask, key), screenWorkspace sc >>= flip whenJust (windows . f))
         | (key, sc) <- zip [xK_w, xK_e] [1, 0]
         , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]

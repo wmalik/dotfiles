@@ -11,14 +11,24 @@ URxvt.hold: true
 !............!
 ! Colors from /etc/X11/rgb.txt
 
-URxvt.title: rxvt-unicode-256color
-URxvt.pointerColor: green
-URxvt.internalBorder: 2
-URxvt.scrollBar: false
-URxvt*saveLines:64000
+URxvt.title: rxvt
+URxvt.internalBorder: 10
+URxvt.scrollBar: true
+URxvt.scrollBar_right: true
+URxvt*saveLines:128000
 URxvt*scrollTtyOutput: false
 URxvt*scrollWithBuffer: true
 URxvt*scrollTtyKeypress: true
+URxvt.scrollstyle: plain
+URxvt.scrollColor: CornflowerBlue
+URxvt.thickness: 6
+
+URxvt.visualBell: false
+URxvt.mapAlert: true
+! Taken from http://bastian.rieck.ru/blog/posts/2013/making_urxvt_beautiful/
+!urxvt*transparent: true
+!URxvt.shading: 5
+
 
 !............!
 ! Fonts      !
@@ -26,15 +36,24 @@ URxvt*scrollTtyKeypress: true
 !URxvt*font: xft:terminus:size=12
 URxvt*font: xft:Inconsolata:size=12
 !URxvt.letterSpace: 1
-URxvt.keysym.M-C-1: command:\033]710;xft:Inconsolata:size=12\007\033]711;xft:Inconsolata:size=12\007
-URxvt.keysym.M-C-2: command:\033]710;xft:terminus:size=12\007\033]711;xft:terminus:size=12\007
+!URxvt.keysym.M-C-1: command:\033]710;xft:Inconsolata:size=12\007\033]711;xft:Inconsolata:size=12\007
+!URxvt.keysym.M-C-2: command:\033]710;xft:terminus:size=12\007\033]711;xft:terminus:size=12\007
 
+
+!urxvt.font:             9x15bold,\
+!-misc-fixed-bold-r-normal--15-140-75-75-c-90-iso10646-1,\
+!-misc-fixed-medium-r-normal--15-140-75-75-c-90-iso10646-1, \
+![codeset=JISX0208]xft:Kochi Gothic, \
+!xft:Bitstream Vera Sans Mono:autohint=true, \
+!xft:Code2000:antialias=false
+!urxvt.boldFont:         -xos4-terminus-bold-r-normal--14-140-72-72-c-80-iso8859-15
+!urxvt.italicFont:       xft:Bitstream Vera Sans Mono:italic:autohint=true
+!urxvt.boldItalicFont:   xft:Bitstream Vera Sans Mono:bold:italic:autohint=true
 !............!
 !   Colors   !
 !............!
 
-
-URxvt*colorBD: SeaGreen
+URxvt*colorBD: RoyalBlue1
 URxvt*colorIT: pink
 
 urxvt*foreground: white
@@ -43,12 +62,12 @@ urxvt*background: black
 
 ! Taken from http://bastian.rieck.ru/blog/posts/2013/making_urxvt_beautiful/
 *color0:  #2E3436
-*color1:  #a40000
+*color1:  #ef2929
 *color2:  #4E9A06
 *color3:  #C4A000
 *color4:  #3465A4
 *color5:  #75507B
-*color6:  #ce5c00
+*color6:  #f57900
 *color7:  #babdb9
 *color8:  #555753
 *color9:  #EF2929
@@ -59,17 +78,34 @@ urxvt*background: black
 *color14: #fcaf3e
 *color15: #EEEEEC
 
-! Taken from http://bastian.rieck.ru/blog/posts/2013/making_urxvt_beautiful/
-urxvt*transparent: true
-urxvt*shading: 8
+! Dracula Xresources palette
+!*.foreground: #F8F8F2
+!*.background: #282A36
+!*.color0:     #000000
+!*.color8:     #4D4D4D
+!*.color1:     #FF5555
+!*.color9:     #FF6E67
+!*.color2:     #50FA7B
+!*.color10:    #5AF78E
+!*.color3:     #F1FA8C
+!*.color11:    #F4F99D
+!*.color4:     #BD93F9
+!*.color12:    #CAA9FA
+!*.color5:     #FF79C6
+!*.color13:    #FF92D0
+!*.color6:     #8BE9FD
+!*.color14:    #9AEDFE
+!*.color7:     #BFBFBF
+!*.color15: #E6E6E6
 
-URxvt*cursorColor: green
-URxvt*cursorBlink: 0
+
+URxvt*cursorColor: yellow
+URxvt*cursorBlink: 1
 
 ! Fading (works only when transparent is false)
-URxvt*fadeColor: gray
-URxvt.depth: 32
-URxvt.fading: 10
+!URxvt*fadeColor: gray
+!URxvt.depth: 32
+!URxvt.fading: 25
 
 ! Urgency hooks
 URxvt.urgentOnBell: true
@@ -77,9 +113,26 @@ URxvt.iso14755: False
 
 ! Other custom settings
 URxvt*loginShell: true
-URxvt.perl-ext-common:  default,matcher,font-size,keyboard-select,clipboard,url-select
-URxvt.url-launcher:     /usr/bin/sensible-browser
+URxvt.perl-ext-common:  default,matcher,font-size,keyboard-select,clipboard,url-select,confirm-paste,bell-command
+URxvt.bell-command: notify-send -t500 "Beep, Beep"
+URxvt.url-launcher: /usr/bin/sensible-browser
+
 URxvt.matcher.button:   1
+!URxvt.keysym.C-Delete:    matcher:last
+!URxvt.keysym.M-Delete:    matcher:list
+!URxvt.matcher.launcher.0: xdg-open
+!URxvt.matcher.pattern.1: \\B(/\\S+?):(\\d+)(?=:|$)               ! gcc and all 
+!URxvt.matcher.launcher.1: urxvt -e vim +$2 $1
+!URxvt.matcher.pattern.2: (?:\\s)([\\~\\.]?\\/\{1,1\}[\\.\\w]\\S+)\\b
+!URxvt.matcher.launcher.2: urxvt -e vim $1
+!URxvt*matcher.pattern.3:  \\bhttps?:\/\/[\\w-.]*\/[\\w./?&@#-]*.(jpg|jpeg|png)
+!URxvt*matcher.launcher.3:  feh $0
+!!URxvt.matcher.rend.2:          Uline fg01
+
+
+
+
+!URxvt.keysym.C-t:    string:eval "$(chef shell-init bash)"\n
 URxvt.keysym.C-Up:     perl:font-size:increase
 URxvt.keysym.C-Down:   perl:font-size:decrease
 URxvt.keysym.C-S-Up:   perl:font-size:incglobal
@@ -94,17 +147,17 @@ URxvt.clipboard.autocopy: true
 URxvt.keysym.M-u: perl:url-select:select_next
 
 ! Dzen2 settings
-dzen2.font:       neep-9
+!dzen2.font:       neep-9
+dzen2.font:       xft:Inconsolata:pixelsize=12
 dzen2.foreground: white
 dzen2.background: black
 
 
 ! For HiDPI displays
-!Xft.dpi: 180
-!Xft.dpi: 140
-Xft.autohint: 0
-Xft.lcdfilter:  lcddefault
-Xft.hintstyle:  hintfull
-Xft.hinting: 1
-Xft.antialias: 1
-Xft.rgba: rgb
+!Xft.dpi: 97
+!Xft.autohint: 0
+!Xft.lcdfilter:  lcddefault
+!Xft.hintstyle:  hintfull
+!Xft.hinting: 1
+!Xft.antialias: 1
+!Xft.rgba: rgb

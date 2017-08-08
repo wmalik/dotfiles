@@ -1,79 +1,65 @@
 # Author: Wasif Malik (wmalik@gmail.com)
 
-background yes
 out_to_console yes
 out_to_x no
 update_interval 2
-short_units
-if_up_strictness address
+short_units yes
+if_up_strictness link
 cpu_avg_samples 4
-#use_spacer left
+
+#use_spacer=left
 
 # Conditional warning template
 template0 ${if_match \1 \2 \3}\4${endif}
 
 TEXT
-^fg(Black)^bg(LightGray)${texeci 300 wget http://ipinfo.io/ip -qO -}^fg()^bg() \
-^bg(DarkBlue)${freq_g} GHz^bg() \
-^bg(Black)Swap: ${swap} \
-^fg(White)^bg(Black)Cached:${cached} \
-^fg(White)^bg(Black)Buffered:${buffers} \
+${if_match ${acpitemp} > 70}^bg(red)Hot (${acpitemp}C)^bg() ${endif}\
+${if_match ${swapperc} > 35}^bg(red)Swapping (${swapperc}%)^bg() ${endif}\
 ${if_mounted /mnt}\
 ^fg(Orange)Mounted ^fg() \
 ${endif}\
 ^bg(Dark Slate Gray)\
- Load \
-^fg(LightBlue)${loadavg 1} \
-^fg(LightGreen)${loadavg 2} \
-^fg(LightPink)${loadavg 3}\
 ^bg() \
 ^ca(1, urxvt -e top)\
-^fg(Dodger Blue)R:^fg(Dark Gray)${diskio_read} ^fg(Sea Green)W:^fg(Dark Gray)${diskio_write} \
+^bg(black)^fg(Dodger Blue)R:^fg(Dark Gray)${diskio_read} ^fg(Sea Green)W:^fg(Dark Gray)${diskio_write} \
 ^ca()\
-${template0 ${acpitemp} > 55 ^fg(White)^bg(Red)Hot:\ ${acpitemp}\ }\
+Disk: ${fs_free}\
 ${template0 ${tcp_portmon\ 22\ 22\ count} > 0 ^fg(White)^bg(Red)SSH}\
 ${template0 ${fs_free_perc} < 5 ^fg(Black)^bg(Orange)\ ${fs_free}\ }\
-${if_up eth0}\
+${if_up enp0s31f6}\
 ^ca(1, urxvt -e wicd-curses)\
-^bg(Dark Green)^fg() eth0 ^bg(Dark Slate Gray) ${addr eth0} \
+^bg(Dark Green)^fg() enp0s31f6 ^bg(Dark Slate Gray) ${addr enp0s31f6} \
 ^ca()\
 ^ca(1, urxvt -e ifstat)\
-^fg(Green Yellow)^i($HOME/.xmonad/bitmaps/sm4/xbm/net_up_01.xbm) ^fg()${upspeed eth0} \
-^fg(yellow)^i($HOME/.xmonad/bitmaps/sm4/xbm/net_down_01.xbm) ^fg()${downspeed eth0}\
+^fg(Green Yellow)U: ^fg()${upspeed enp0s31f6} \
+^fg(yellow)D: ^fg()${downspeed enp0s31f6}\
 ^ca()\
 ${endif} \
-${if_up wlan0}\
+${if_up wlp4s0}\
 ^ca(1, urxvt -e wicd-curses)\
 ^bg(Dark Slate Gray)^fg()\
- ^fg(Golden)^i($HOME/.xmonad/bitmaps/sm4/xbm/wifi_01.xbm) ^fg(Orange)${wireless_essid wlan0} ${wireless_link_qual_perc wlan0}% ${addr wlan0}^fg() \
+ ^fg(Golden) ^fg(Orange)${wireless_essid wlp4s0} ${wireless_link_qual_perc wlp4s0}% [${wireless_freq wlp4s0}] [${wireless_channel wlp4s0}]  ${addr wlp4s0}^fg() \
+(${totalup wlp4s0}) \
+ \
 ^ca()\
 ^ca(1, urxvt -e ifstat)\
-^fg(Green Yellow)^i($HOME/.xmonad/bitmaps/sm4/xbm/net_up_01.xbm) ^fg()${upspeed wlan0} \
-^fg(yellow)^i($HOME/.xmonad/bitmaps/sm4/xbm/net_down_01.xbm) ^fg()${downspeed wlan0} \
+^fg(Green Yellow)U: ^fg()${upspeed wlp4s0} \
+^fg(yellow)D: ^fg()${downspeed wlp4s0} \
 ^ca()\
 ${endif} \
 ^ca(1, urxvt -e top)\
-^bg(Golden Rod)^fg(Steel Blue)^i($HOME/.xmonad/bitmaps/sm4/xbm/mem.xbm)^fg(black)${memperc}% \
-^fg(Steel Blue)^i($HOME/.xmonad/bitmaps/sm4/xbm/cpu.xbm)^fg(black)${cpu}% \
+^bg(Golden Rod) ^fg(Black)M: ^fg(black)${memperc}% \
+^bg(Dark Gray)^fg(Black) C: ${cpu}% \
 ^ca()\
-${if_match ${battery_percent BAT0} > 16} \
-^ca(1, urxvt -fn xft:Inconsolata:size=40 -e acpi -b)\
-^bg(Dark Slate Gray)^fg(Aqua Marine) ^i($HOME/.xmonad/bitmaps/sm4/xbm/bat_full_01.xbm) ^fg(Alice Blue)${battery_short} \
-^ca()\
-${endif}\
-${if_match ${battery_percent BAT0} <= 16} \
-^ca(1, urxvt -fn xft:Inconsolata:size=40 -e acpi -b)\
-^fg(White)^bg(Red) ^i($HOME/.xmonad/bitmaps/bat_low_01.xbm) ^fg()${battery_short} \
-^ca()\
-${execi 10 $HOME/.xmonad/scripts/battery.sh 16}\
+^bg(Dark Slate Gray)^fg(Aqua Marine) ^fg(Alice Blue)${battery_short BAT0} \
+${if_match ${battery_percent BAT0} < 20} \
+^bg(Red) ^fg(White)Battery Low \
 ${endif}\
 ${if_up tun0}\
-^ca(1, urxvt -e ifstat -i tun0)\
-^bg(Orange Red)^fg(White) VPN \
-^ca(1, urxvt -e sudo /etc/init.d/openvpn stop)^fg(white) x ^ca()\
-^ca()\
+^bg(Blue)^fg(White) VPN \
+(${totalup tun0}) \
 ${endif}\
 ${if_running transmission-gt}^bg(Saddle Brown)^fg(white) Torrents ${endif}\
-^ca(1, urxvt -fn xft:Inconsolata:size=30 -e cal -A 3)\
-^bg(black)^fg(Dark Gray) ^i($HOME/.xmonad/bitmaps/sm4/xbm/clock.xbm) ${time %a %d %m %Y} ^fg(white)${time %R}^fg() \
+^ca(1, urxvt -fn xft:In consolata:size=30 -e cal -A 3)\
+^bg(black)^fg(Dark Gray) ${time %a %d %m %Y} ^fg(white)${time %R}^fg() \
 ^ca()\

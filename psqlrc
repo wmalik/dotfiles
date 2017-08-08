@@ -1,7 +1,17 @@
 \x auto
 \timing
-\set HISTFILE ~/.psql_history- :HOST - :DBNAME
+\set HISTFILE ~/.psql_history- :DBNAME
 \set HISTSIZE 2000
-\set PROMPT1 '(%`date --rfc-3339=seconds`) %m:%> %[%033[1m%]%n@%/%R%[%033[0m%]%# '
+\set PROMPT1 '%m:%> %[%033[1m%]%n@%/%R%[%033[0m%]%# '
 \set PROMPT2 '> '
 \set COMP_KEYWORD_CASE upper
+
+
+\set QUIET 1
+\pset null '∅'
+
+-- Customize prompts
+
+\set VERBOSITY verbose
+\set HISTCONTROL ignoreboth
+\unset QUIET

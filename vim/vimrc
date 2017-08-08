@@ -3,19 +3,6 @@
 "             http://stevelosh.com/blog/2010/09/coming-home-to-vim
 "             http://learnvimscriptthehardway.stevelosh.com/
 
-" Plugins
-    " git clone https://github.com/mileszs/ack.vim
-    " git clone https://github.com/kien/ctrlp.vim
-    " git clone https://github.com/mattn/gist-vim
-    " git clone https://github.com/vim-scripts/grep.vim
-    " git clone https://github.com/scrooloose/nerdcommenter
-    " git clone https://github.com/scrooloose/nerdtree
-    " git clone https://github.com/msanders/snipmate.vim
-    " git clone https://github.com/scrooloose/syntastic
-    " git clone git@github.com:jimenezrick/vimerl.git
-    " git clone https://github.com/tpope/vim-surround
-    " git clone https://github.com/mattn/webapi-vim
-
 " Pathogen stuff {{{
 call pathogen#infect('bundle/{}')
 "call pathogen#incubate()
@@ -25,8 +12,8 @@ call pathogen#helptags()
 " Absolute essentials {{{
 set nocompatible	" Use Vim defaults instead of 100% vi compatibility
 set nofoldenable
-"colorscheme jellybeans
-colorscheme distinguished
+colorscheme jellybeans
+"colorscheme distinguished
 syntax on
 filetype on
 filetype plugin on
@@ -38,6 +25,7 @@ set showmode
 set showcmd
 "set hidden " dont really like the fact that the buffers stay open
 set wildmenu
+set nu
 set wildmode=list:longest
 set novisualbell
 set cursorline
@@ -50,8 +38,6 @@ set sidescroll=1
 set textwidth=80
 set formatoptions=qrn1
 set listchars=tab:▸\ ,eol:¬
-set rnu
-set nu
 set smartcase
 set showmatch
 set noantialias
@@ -60,7 +46,7 @@ set noantialias
 "set smartindent "'smartindent' and 'cindent' might interfere with file type
 ""based indentation, and should never be used in conjunction with it.
 set tabstop=4
-set shiftwidth=4
+set shiftwidth=2
 set expandtab "pressing tab inserts spaces
 if has("gui_running")
     set mouse=a
@@ -90,14 +76,15 @@ runtime! ftplugin/man.vim
 " searches for a tags file in the higher level directories until it is found
 " enables tag browsing no matter where the src is
 set tags=./tags;/
+set tags+=/home/arthur/.rbenv/versions/2.3.4/lib/ruby/gems/2.3.0/gems/tags
 " highlight extra whitespace
-highlight ExtraWhitespace ctermbg=red guibg=red
+highlight ExtraWhitespace ctermbg=blue guibg=blue
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 set tw=80
-set wildignore=*.o,*~,*.beam,*.swf,*.mp3,*.jpg,*.png,ebin
+set wildignore=*.o,*~,*.beam,*.swf,*.mp3,*.jpg,*.png,ebin,.git
 if filereadable(".vimrc.project")
     so .vimrc.project
 endif
@@ -145,14 +132,14 @@ nnoremap <Tab>d :tabclose<CR>
 noremap <silent> <Space> :noh<Bar>:echo<CR>
 nnoremap <leader>k :set list!<CR>
 nnoremap :W :w
+nnoremap :Set :set
 nnoremap Y 0y$
-nnoremap 9 $
 inoremap <C-a> <C-o>^
 inoremap <C-e> <C-o>$
 "}}}
 
 " Mouse {{{
-"set mouse=a
+set mouse=a
 "}}}
 
 " Erlang {{{
@@ -230,19 +217,19 @@ nnoremap <leader>ct :!ctags -R --exclude=assets *<cr>
 " }}}
 
 
-augroup filetype_erl
-    autocmd!
-    autocmd FileType,BufNewFile,BufRead escript setlocal filetype=erlang
-    autocmd FileType,BufNewFile,BufRead *.app.src setlocal filetype=erlang
-    autocmd FileType,BufNewFile,BufRead rebar.config setlocal filetype=erlang
-    autocmd FileType,BufNewFile,BufRead *.term setlocal filetype=erlang
-    command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | set ft=erlang | r !grep -sirn --exclude=tags --exclude-dir=log --exclude-dir=.eunit --exclude-dir=.git --exclude-dir=ebin <args> .
-    nnoremap <leader>ct :ErlangTags<cr>
-    command! -nargs=1 Erl Man 3erl <args>
-    nnoremap <leader>ei yiwoerror_logger:info_msg("<esc>pa ~p~n", [<esc>pa]),<esc>
-    vnoremap <leader>ei "myoerror_logger:info_msg("<esc>"mpa ~p~n", [<esc>"mpa]),<esc>
+"augroup filetype_erl
+    "autocmd!
+    "autocmd FileType,BufNewFile,BufRead escript setlocal filetype=erlang
+    "autocmd FileType,BufNewFile,BufRead *.app.src setlocal filetype=erlang
+    "autocmd FileType,BufNewFile,BufRead rebar.config setlocal filetype=erlang
+    "autocmd FileType,BufNewFile,BufRead *.term setlocal filetype=erlang
+    "command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | set ft=erlang | r !grep -sirn --exclude=tags --exclude-dir=log --exclude-dir=.eunit --exclude-dir=.git --exclude-dir=ebin <args> .
+    "nnoremap <leader>ct :ErlangTags<cr>
+    "command! -nargs=1 Erl Man 3erl <args>
+    "nnoremap <leader>ei yiwoerror_logger:info_msg("<esc>pa ~p~n", [<esc>pa]),<esc>
+    "vnoremap <leader>ei "myoerror_logger:info_msg("<esc>"mpa ~p~n", [<esc>"mpa]),<esc>
 
-augroup END
+"augroup END
 
 augroup filetype_html
     autocmd!
@@ -251,19 +238,22 @@ augroup filetype_html
     au FileType html setl sw=2 sts=2
 augroup END
 
+let g:ycm_python_binary_path = 'python'
+augroup filetype_python
+    autocmd!
+    autocmd FileType,BufNewFile,BufRead *.py setlocal filetype=python
+    au BufNewFile,BufRead *.py  setl tabstop=2  softtabstop=2  shiftwidth=2  textwidth=80  expandtab  autoindent  fileformat=unix
+    map <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
+    nnoremap <leader>o yiwoprint "<esc>pa: {}".format(<esc>pa)<esc>
+augroup END
 
-
-
-"" UNSORTED
 inoremap <C-h> <left>
 inoremap <C-l> <right>
 inoremap <C-j> <down>
 inoremap <C-k> <up>
-command! Ds set syntax=0
 command! Z tabnew %
 xnoremap . :norm.<CR>
 
-"hi StatusLine ctermbg=white ctermfg=white
 
 " Move visual block
 vnoremap J :m '>+1<CR>gvgv
@@ -279,9 +269,32 @@ nno <leader>K :<C-u>Unite ref/erlang
 let &colorcolumn=join(range(&tw,999),",")
 nnoremap & /^<C-r><C-w><cr>
 
-
-au FocusLost * :wa
-":au FocusLost * silent! wa
 set autowrite
 set autowriteall
 
+nmap <leader>p :set paste<cr>"*p:set nopaste<cr>
+nmap <leader>np :set nopaste<cr>
+
+if executable('ag')
+  let g:ackprg = 'ag --vimgrep'
+endif
+
+" local cd into the windows file
+"autocmd BufEnter * silent! lcd %:p:h
+
+" syntastic
+"set statusline+=%#warningmsg#
+"set statusline+=%*
+"let g:syntastic_always_populate_loc_list = 1
+"let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+"let g:syntastic_check_on_wq = 0
+let g:syntastic_python_checkers = []
+
+set clipboard=unnamedplus
+
+let g:ycm_key_list_select_completion=[]
+let g:ycm_key_list_previous_completion=[]
+let g:UltiSnipsExpandTrigger="<c-j>"
+
+nnoremap <leader>r :RuboCop<cr>

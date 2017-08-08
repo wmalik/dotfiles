@@ -7,11 +7,6 @@
     editor = vim
     quotepath = false
 	excludesfile = ~/.gitignore
-[color]
-    diff = auto
-    status = auto
-[color "diff"]
-    whitespace = red reverse
 [color "status"]
     added = green
     changed = blue bold
@@ -19,27 +14,29 @@
 [alias]
     s = status
     sb = status -sb
-    aa = add -A
     br = branch
     ci = commit
+    ch = cherry-pick
     co = checkout
-    df = diff
     ui = update-index
-    unchange = update-index --assume-unchanged
-    change = update-index --no-assume-unchanged
-    dc = diff --cached
     last = log -1 HEAD
     lg = log --graph --decorate --pretty=format:'%C(blue)%h%Creset -%C(red)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
-    tree = log --graph --decorate --pretty=format:'%C(magenta)%h%Creset -%C(red)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
     today = diff --stat @{12am}..HEAD
     total = !git log --pretty=oneline | wc -l
 	d = difftool
-    hub = !echo "https://github.com/`git config remote.origin.url`" | sed "s/git@github.com://g" | xargs sensible-browser
+    hub = !echo "https://github.com/`git config remote.origin.url`" | sed "s/git@github.com://g" | xargs firefox
+    pulls = !echo "https://github.com/`git config remote.origin.url`/pulls" | sed "s/git@github.com://g" | sed "s/\\\\.git//g" |xargs firefox
+    issues = !echo "https://github.com/`git config remote.origin.url`/issues" | sed "s/git@github.com://g" | sed "s/\\\\.git//g" |xargs firefox
+    circle = !echo "https://circleci.com/gh/`git config remote.origin.url`" | sed "s/git@github.com://g" |  sed "s/.git//g" | xargs firefox
     url =!sh -c 'HEAD=`git rev-parse HEAD` && SHA1=`[ "$0" = "sh" ] && echo $HEAD || echo $0` && echo `git hub`"/commit/"${SHA1i}'
     travis = !git remote -v | grep push | awk '{print $2}' | awk -F: '{print $2}' | awk -F. '{print abc}'
     prom = pull --rebase origin master
+    prod = pull --rebase origin develop
 [diff]
 	tool = vimdiff
-[merge]
-    ;tool = mymeld
-    ;conflictstyle = diff3
+[push]
+	default = current
+[web]
+	browser = firefox
+[browser "firefox"]
+  cmd = /usr/bin/firefox
