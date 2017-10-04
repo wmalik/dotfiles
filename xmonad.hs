@@ -33,13 +33,13 @@ import XMonad.Layout.LayoutModifier
 import XMonad.Layout.Grid
 import XMonad.Layout.ShowWName
 -- for chrome full screen
-import XMonad.Hooks.EwmhDesktops
 import Graphics.X11.ExtraTypes.XF86
 import Data.Ratio ((%))
 import qualified XMonad.StackSet as W
 import qualified Data.Map as M
 
 import XMonad.Actions.UpdatePointer
+import XMonad.Config.Desktop
 
 -- Config
 -- Define Terminal
@@ -48,8 +48,8 @@ modMask' :: KeyMask
 modMask' = mod4Mask
 -- Define workspaces
 myWorkspaces    = ["1","2","3","4","5", "6", "7", "8", "9", "10"]
-myXmonadBar = "killall dzen2; dzen2 -ta 'l' -tw 600 -e"
-myStatusBar = "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -xs 2 -ta 'r' -e"
+myXmonadBar = "killall dzen2; dzen2 -dock -l 1 -ta 'l' -tw 600 -e"
+myStatusBar = "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -dock -l 1 -xs 2 -ta 'r' -e"
 myBitmapsDir = ".xmonad/bitmaps/"
 --
 -- Main
@@ -57,7 +57,7 @@ main = do
     dzenLeftBar <- spawnPipe myXmonadBar
     dzenRightBar <- spawnPipe myStatusBar
     -- midTrayer <- spawnPipe myTrayer
-    xmonad $ withUrgencyHookC dzenUrgencyHook { args = ["-bg", "red", "fg", "black", "-y", "25"] } urgencyConfig { remindWhen = Every 15 } $ defaultConfig
+    xmonad $ withUrgencyHookC dzenUrgencyHook { args = ["-bg", "red", "fg", "black", "-y", "25"] } urgencyConfig { remindWhen = Every 15 } $ docks $ desktopConfig
       { workspaces          = myWorkspaces
       , keys                = keys'
       , startupHook         = setWMName "LG3D"
@@ -79,9 +79,14 @@ main = do
 myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
     [ ((0, 8), (\w -> windows W.focusDown)) -- useful when cycling through windows in a full screen layout
     , ((0, 9), (\w -> toggleWS)) -- cycle between current and last used workspace
-    , ((0, 6), (\w -> spawn "notify-send -t 5000 \"`/usr/bin/yubioath || echo 'No yubikey?'`\""))
     , ((0, 7), (\w -> spawn "notify-send -t 5000 \"`curl ipinfo.io/ip || echo 'Got net?'`\""))
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
+    ]
+    ++
+    [ ((modMask, button1), (\w -> focus w >> mouseMoveWindow w >> windows W.shiftMaster)) -- mod-button1, Set the window to floating mode and move by dragging
+    , ((modMask, button2), (\w -> focus w >> windows W.shiftMaster)) -- mod-button2, Raise the window to the top of the stack
+    , ((modMask, button3), (\w -> focus w >> mouseResizeWindow w >> windows W.shiftMaster)) -- mod-button3, Set the window to floating mode and resize by dragging
+    , ((0, 9), (\w -> toggleWS)) -- cycle between current and last used workspace
     ]
 
 -- Hooks {{{
@@ -101,7 +106,6 @@ manageHook' = (composeAll . concat $
     ])
 
     where
-
         role      = stringProperty "WM_WINDOW_ROLE"
         name      = stringProperty "WM_NAME"
 
@@ -115,7 +119,7 @@ manageHook' = (composeAll . concat $
         -- resources
         -- xprop | grep WM_CLASS
         myFloats  = ["notify-osd","Xmessage","XFontSel","Downloads","bashrun"]
-        myIgnores = ["xfce4-notifyd","stalonetray","trayer","panel"]
+        myIgnores = ["xfce4-notifyd","stalonetray","trayer","panel", "desktop","desktop_window","notify-osd", "Toplevel"]
 
         -- names
         myNames   = ["Google Chrome Options","Chromium Options"]
@@ -225,6 +229,9 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((0,                          xF86XK_AudioMute        ), spawn "amixer -q sset Master toggle")  -- XF86AudioMute
     , ((0,                          xF86XK_AudioLowerVolume ), spawn "amixer -q sset Master 5%-; notify-send -t 100 `amixer get Master | egrep -o \"[0-9]+%\"` ") -- XF86AudioLowerVolume
     , ((0,                          xF86XK_AudioRaiseVolume ), spawn "amixer -q sset Master 5%+; notify-send -t 100 `amixer get Master | egrep -o \"[0-9]+%\"`")  -- XF86AudioRaiseVolume.
+    , ((0,                          xF86XK_AudioPrev ),        spawn "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous")
+    , ((0,                          xF86XK_AudioNext ),        spawn "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next")
+    , ((0,                          xF86XK_AudioPlay ),        spawn "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause")  -- XF86AudioRaiseVolume.
     , ((modMask,                    xK_Down                 ), spawn "amixer -q sset Master 5%-")
     , ((modMask,                    xK_Up                   ), spawn "amixer -q sset Master 5%+")
 
