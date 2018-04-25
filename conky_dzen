@@ -21,6 +21,7 @@ ${endif}\
 ^bg(Dark Slate Gray)\
 ^bg() \
 ^ca(1, urxvt -e top)\
+^bg(Dark Gray)^fg(Black)${loadavg 1}/${loadavg 2}/${loadavg 3}\
 ^bg(black)^fg(Dodger Blue)R:^fg(Dark Gray)${diskio_read} ^fg(Sea Green)W:^fg(Dark Gray)${diskio_write} \
 ^ca()\
 Disk: ${fs_free}\
@@ -48,8 +49,8 @@ ${if_up wlp4s0}\
 ^ca()\
 ${endif} \
 ^ca(1, urxvt -e top)\
-^bg(Golden Rod) ^fg(Black)M: ^fg(black)${memperc}% \
-^bg(Dark Gray)^fg(Black) C: ${cpu}% \
+^bg(Golden Rod) ^fg(Black)MEM: ^fg(black)${memperc}% \
+^bg(Dark Gray)^fg(Black) CPU: ${cpu}% \
 ^ca()\
 ^bg(Dark Slate Gray)^fg(Aqua Marine) ^fg(Alice Blue)${battery_short BAT0} \
 ${if_match ${battery_percent BAT0} < 20} \

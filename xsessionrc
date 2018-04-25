@@ -1,9 +1,7 @@
 xrdb -load ~/.Xresources
 xscreensaver -nosplash &
-pidgin &
 ~/.fehbg &
-xset r rate 300 100
-compton -b
 
+#compton -b
 # Enable to tap to click
-# synclient TapButton1=1 TapButton2=3 TapButton3=2
+synclient TapButton1=1 TapButton2=3 TapButton3=2

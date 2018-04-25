@@ -13,7 +13,7 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 if [ "$color_prompt" = yes ]; then
-  PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]$(__git_ps1)\$ '
+  PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\[\033[90m\]$(__git_ps1)\[\033[00m\] \n\$ '
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
@@ -35,20 +35,22 @@ export HISTSIZE=
 # Trigger the urgency hook manually e.g. after a script finishes execution
 
 [ -f ~/repos/labs/bashmarks/bashmarks.sh ] && source ~/repos/labs/bashmarks/bashmarks.sh
-[ -f ~/.privrc ] && source ~/.privrc
 
 
 export TERM="rxvt"
+export TERMINAL="urxvt" # For rofi-sensible-terminal
 export EDITOR=vim
 export CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
 alias fehi="feh -d -F --draw-tinted --info \"exif '%f' | grep 'Model\|DateTimeOriginal\|FNumber\|ISO\|Exposure\ Time\|Focal\ Length\|F-Number\|Shutter\|Aperture\|Compression'\""
 alias urgency='PS1="$PS1\a"'
 alias vim='TERM=rxvt-unicode-256color vim'
+alias jvim='jq . | vim +"set ft=json"'
 alias ls='ls --color=auto'
 alias f='find . -name'
-alias g='/usr/bin/git'
+alias g='git'
 alias girn='grep -irn'
+# TODO: git clone $1 && cd $2 && git shortlog -sne
 alias digs="dig +short"
 alias tree="tree -AC"
 alias now="date +%s"
@@ -58,5 +60,17 @@ alias xc="vim ~/.xmonad/.conky_dzen"
 alias xr="vim ~/.Xresources; xrdb ~/.Xresources"
 alias grep="grep --color"
 alias w="wicd-curses"
-alias holidays='gcal --holiday-list --cc-holidays=de_be'
+alias holidays='gcal --holiday-list -N --cc-holidays=de_be'
 alias rand="cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1"
+alias h="heroku"
+alias n="nohup urxvt &>/dev/null &"
+# TODO:
+# write a function clone() to do git clone $repo + cd dir + git stats
+
+[ -f ~/.privrc ] && source ~/.privrc
+xset r rate 300 100
+xset b off
+#sudo modprobe -r psmouse && sudo modprobe psmouse proto=imps
+
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

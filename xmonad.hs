@@ -4,8 +4,10 @@
 import XMonad
 -- Prompt
 import XMonad.Prompt
+import XMonad.Prompt.Shell
 import XMonad.Prompt.RunOrRaise (runOrRaisePrompt)
 import XMonad.Prompt.AppendFile (appendFilePrompt)
+import XMonad.Prompt.Window
 -- Hooks
 import XMonad.Operations
 import System.IO
@@ -40,6 +42,7 @@ import qualified Data.Map as M
 
 import XMonad.Actions.UpdatePointer
 import XMonad.Config.Desktop
+import XMonad.Config.Gnome
 
 -- Config
 -- Define Terminal
@@ -48,15 +51,14 @@ modMask' :: KeyMask
 modMask' = mod4Mask
 -- Define workspaces
 myWorkspaces    = ["1","2","3","4","5", "6", "7", "8", "9", "10"]
-myXmonadBar = "killall dzen2; dzen2 -dock -l 1 -ta 'l' -tw 600 -e"
-myStatusBar = "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -dock -l 1 -xs 2 -ta 'r' -e"
+myXmonadBar = "killall dzen2; dzen2 -dock -ta 'l' -tw 600 -e"
+myStatusBar = "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -dock -xs 2 -ta 'r' -e"
 myBitmapsDir = ".xmonad/bitmaps/"
 --
 -- Main
 main = do
     dzenLeftBar <- spawnPipe myXmonadBar
     dzenRightBar <- spawnPipe myStatusBar
-    -- midTrayer <- spawnPipe myTrayer
     xmonad $ withUrgencyHookC dzenUrgencyHook { args = ["-bg", "red", "fg", "black", "-y", "25"] } urgencyConfig { remindWhen = Every 15 } $ docks $ desktopConfig
       { workspaces          = myWorkspaces
       , keys                = keys'
@@ -96,9 +98,9 @@ manageHook' = (composeAll . concat $
     [ [resource     =? r            --> doIgnore            |   r   <- myIgnores] -- ignore desktop
     , [className    =? c            --> doShift  "1"   |   c   <- myDev    ] -- move dev to main
     , [className    =? c            --> doShift  "2"    |   c   <- myWebs   ] -- move webs to main
+    , [className    =? c            --> doShift  "4"   |   c   <- myChat  ]
     , [className    =? c            --> doShift  "3"    |   c   <- myVim    ] -- move vim to vim
-    , [className    =? c            --> doShift	 "4"   |   c   <- myPidgin  ]
-    , [className    =? c            --> doShift	 "9"   |   c   <- myToys  ]
+    , [className    =? c            --> doShift  "9"   |   c   <- myToys  ]
     , [className    =? c            --> doCenterFloat       |   c   <- myFloats ] -- float my floats
     , [name         =? n            --> doCenterFloat       |   n   <- myNames  ] -- float my names
     , [isFullscreen                 --> myDoFullFloat                           ]
@@ -110,11 +112,11 @@ manageHook' = (composeAll . concat $
         name      = stringProperty "WM_NAME"
 
         -- classnames
-        myWebs    = ["Firefox", "Firefox-esr", "Google-chrome","Chromium", "Chromium-browser","Iceweasel","iceweasel"]
-        myPidgin  = ["Pidgin","Buddy List", "chat", "Slack", "Skype", "skype"]
-        myDev	  = ["urxvt"]
-        myVim	  = ["Gvim"]
-        myToys	  = ["Conky"]
+        myWebs    = ["Nightly", "Firefox", "Firefox-esr", "Google-chrome","Chromium", "Chromium-browser","Iceweasel","iceweasel"]
+        myChat  = ["Pidgin","Buddy List", "chat", "Slack", "Skype", "skype"]
+        myDev   = ["urxvt"]
+        myVim   = ["Gvim"]
+        myToys  = ["Conky"]
 
         -- resources
         -- xprop | grep WM_CLASS
@@ -172,6 +174,7 @@ colorGreen          = "#A6E22E"
 colorBlue           = "#66D9EF"
 colorYellow         = "#E6DB74"
 colorWhite          = "#CCCCC6"
+colorPurple         = "#8F00FF"
 
 colorNormalBorder   = "black"
 colorFocusedBorder  = "white"
@@ -179,18 +182,18 @@ colorFocusedBorder  = "white"
 
 barFont  = "inconsolata"
 barXFont = "inconsolata:size=14"
-xftFont = "xft: inconsolata-14"
+xftFont = "xft: inconsolata-18"
 --}}}
 
 -- Prompt Config {{{
 mXPConfig :: XPConfig
 mXPConfig =
     defaultXPConfig { font                  = barFont
-                    , bgColor               = colorBlack
-                    , fgColor               = colorYellow
+                    , bgColor               = colorPurple
+                    , fgColor               = colorWhite
                     , bgHLight              = colorGreen
                     , fgHLight              = colorDarkGray
-                    , promptBorderWidth     = 1
+                    , promptBorderWidth     = 0
                     , height                = 16
                     , historyFilter         = deleteConsecutive
                     }
@@ -199,29 +202,29 @@ mXPConfig =
 largeXPConfig :: XPConfig
 largeXPConfig = mXPConfig
                 { font = xftFont
-                , height = 35
+                , height = 60
                 }
 -- }}}
 -- Key mapping {{{
 keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     [
-      ((modMask,                    xK_p     ), runOrRaisePrompt largeXPConfig)
+      ((modMask,                    xK_p     ), spawn "rofi -show")
+    , ((modMask,                    xK_f), safePrompt "firefox" greenXPConfig)
     , ((modMask .|. shiftMask,      xK_Return), spawn $ XMonad.terminal conf)
     , ((modMask,                    xK_d     ), kill)
     , ((modMask .|. shiftMask,      xK_c     ), kill)
     , ((0,                          xK_Insert), pasteSelection)
     , ((modMask,                    xK_Tab     ), toggleWS)
     , ((modMask,                    xK_n     ), spawn "urxvt -e wicd-curses")
-    , ((modMask,                    xK_v     ), spawn "urxvt -e bash -c 'echo $HOSTNAME'")
+    , ((modMask,                    xK_v     ), spawn "urxvt -e bash -c 'sudo tail -f /var/log/syslog'")
 
     -- Programs
-    , ((modMask,                    xK_Print ), spawn "cd ~/screenshots; scrot -e 'notify-send -t 2000 $f --icon=/home/arthur/screenshots/$f'")
-    , ((modMask .|. shiftMask,      xK_Print ), spawn "cd ~/screenshots; scrot -u -e 'notify-send -t 2000 $f --icon=/home/arthur/screenshots/$f'")
-    , ((modMask,		            xK_o     ), spawn "firefox")
-    , ((modMask .|. shiftMask,		xK_o     ), spawn "firefox --private-window")
-    , ((modMask,		            xK_s     ), spawn "keepass2")
-    , ((modMask,		            xK_y     ), spawn "pkill -9 yubioath-gui; yubioath-gui")
-    , ((modMask .|. shiftMask,	    xK_l     ), spawn "xscreensaver-command -lock")
+    , ((modMask,                    xK_Print ), spawn "cd ~/data/screenshots; scrot -u -e 'notify-send -t 2000 $f --icon=/home/arthur/data/screenshots/$f && feh --draw-filename --draw-tinted /home/arthur/data/screenshots/$f'")
+    , ((modMask,                    xK_o     ), spawn "firefox")
+    , ((modMask .|. shiftMask,      xK_o     ), spawn "firefox --private-window")
+    , ((modMask,                    xK_s     ), spawn "keepass2")
+    , ((modMask,                    xK_y     ), spawn "urxvt -e bash -c 'yubioath'")
+    , ((modMask .|. shiftMask,      xK_l     ), spawn "xscreensaver-command -lock")
 
     -- Media Keys
     , ((0,                          xF86XK_MonBrightnessDown), spawn "xbacklight -dec 5")
@@ -239,6 +242,9 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask,                    xK_space ), sendMessage NextLayout)
     , ((modMask .|. shiftMask,      xK_space ), setLayout $ XMonad.layoutHook conf)          -- reset layout on current desktop to default
     , ((modMask,                    xK_b     ), sendMessage ToggleStruts)
+    , ((modMask .|. shiftMask, xK_g     ), windowPrompt
+        def { autoComplete = Just 500000 }
+        Goto allWindows)
     , ((modMask,                    xK_z     ), windows W.focusDown)
     , ((modMask,                    xK_j     ), windows W.focusDown)
     , ((modMask,                    xK_k     ), windows W.focusUp  )

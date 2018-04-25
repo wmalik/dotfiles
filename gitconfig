@@ -25,13 +25,15 @@
     total = !git log --pretty=oneline | wc -l
 	d = difftool
     hub = !echo "https://github.com/`git config remote.origin.url`" | sed "s/git@github.com://g" | xargs firefox
-    pulls = !echo "https://github.com/`git config remote.origin.url`/pulls" | sed "s/git@github.com://g" | sed "s/\\\\.git//g" |xargs firefox
-    issues = !echo "https://github.com/`git config remote.origin.url`/issues" | sed "s/git@github.com://g" | sed "s/\\\\.git//g" |xargs firefox
+    pulls = !echo "https://github.com/`git config remote.origin.url`/pulls" | sed "s/git@github.com://g" | sed "s/\\\\.git//g" | xargs firefox
+    issues = !echo "https://github.com/`git config remote.origin.url`/issues" | sed "s/git@github.com://g" | sed "s/\\\\.git//g" | xargs firefox
     circle = !echo "https://circleci.com/gh/`git config remote.origin.url`" | sed "s/git@github.com://g" |  sed "s/.git//g" | xargs firefox
-    url =!sh -c 'HEAD=`git rev-parse HEAD` && SHA1=`[ "$0" = "sh" ] && echo $HEAD || echo $0` && echo `git hub`"/commit/"${SHA1i}'
+    url =!sh -c 'HEAD=`git rev-parse HEAD` && SHA1=`[ "$0" = "sh" ] && echo $HEAD || echo $0` && echo `git hub`"/commit/"${SHA1}'
     travis = !git remote -v | grep push | awk '{print $2}' | awk -F: '{print $2}' | awk -F. '{print abc}'
     prom = pull --rebase origin master
     prod = pull --rebase origin develop
+    stats = shortlog -sne
+    staged = diff --staged
 [diff]
 	tool = vimdiff
 [push]
@@ -40,3 +42,5 @@
 	browser = firefox
 [browser "firefox"]
   cmd = /usr/bin/firefox
+[url "git@github.com:"]
+	insteadOf = https://github.com/

@@ -71,7 +71,6 @@ set noincsearch
 set hlsearch
 
 set ignorecase
-set colorcolumn=80
 runtime! ftplugin/man.vim
 " searches for a tags file in the higher level directories until it is found
 " enables tag browsing no matter where the src is
@@ -83,7 +82,6 @@ autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
-set tw=80
 set wildignore=*.o,*~,*.beam,*.swf,*.mp3,*.jpg,*.png,ebin,.git
 if filereadable(".vimrc.project")
     so .vimrc.project
@@ -98,12 +96,10 @@ command! -nargs=* -complete=shellcmd R new | setlocal buftype=nofile bufhidden=h
 " grep the word under cursor (case insensitive) in multiple directories
 nmap <leader>f :R grep -sirn <c-r>=expand("<cword> *")<cr> .<cr> :set ft=sh<cr>
 
-" zoom the current buffer (aka open the current buffer in a new tab)
-nmap <leader>z :tabnew %<cr>
-
 " shortcut to find a string in multiple src dirs, example :F something
 "command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | set ft=erlang | r !grep -sirn --exclude=tags --exclude-dir=log --exclude-dir=ebin <args> .
-command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | set ft=erlang | r !ag --vimgrep <args>
+"command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | set ft=erlang | r !ag --vimgrep <args>
+command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | r !Ack --vimgrep <args>
 
 " Open a scratch buffer
 command! S new | setlocal buftype=nofile bufhidden=hide noswapfile
@@ -127,6 +123,8 @@ nnoremap <S-Backspace> <C-w>W
 nnoremap <leader>n :NERDTreeToggle<CR>
 nnoremap <C-l> :tabnext<CR>
 nnoremap <C-h> :tabprev<CR>
+nnoremap <leader>l :+tabmove<CR>
+nnoremap <leader>h :-tabmove<CR>
 nnoremap <Tab>n :tabnew<CR>
 nnoremap <Tab>d :tabclose<CR>
 noremap <silent> <Space> :noh<Bar>:echo<CR>
@@ -134,6 +132,7 @@ nnoremap <leader>k :set list!<CR>
 nnoremap :W :w
 nnoremap :Set :set
 nnoremap Y 0y$
+nnoremap T :Texplore<CR>
 inoremap <C-a> <C-o>^
 inoremap <C-e> <C-o>$
 "}}}
@@ -266,8 +265,7 @@ nno <leader>K :<C-u>Unite ref/erlang
             \ -vertical -default-action=split<CR>
 
 
-let &colorcolumn=join(range(&tw,999),",")
-nnoremap & /^<C-r><C-w><cr>
+nnoremap <leader>a :Ack! <C-r><C-w><cr>
 
 set autowrite
 set autowriteall
@@ -297,4 +295,31 @@ let g:ycm_key_list_select_completion=[]
 let g:ycm_key_list_previous_completion=[]
 let g:UltiSnipsExpandTrigger="<c-j>"
 
-nnoremap <leader>r :RuboCop<cr>
+"let g:syntastic_go_checkers = []
+"let g:syntastic_go_gometalinter_args = ['--disable-all']
+"let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['go'] }
+
+let g:go_metalinter_autosave = 1
+let g:go_metalinter_autosave_enabled = []
+autocmd FileType go nmap <leader>b :GoBuild<cr>
+autocmd FileType go nmap <leader>t :GoTestCompile<cr>
+autocmd FileType go nmap <leader>i :GoInfo<cr>
+autocmd FileType go nmap <leader>v :GoVet<cr>
+autocmd FileType go nmap <leader>d :GoDescribe<cr>
+
+let g:go_play_browser_command = '/usr/bin/firefox'
+let g:go_info_mode = 'guru'
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_format_strings = 1
+let g:go_fmt_options = {
+      \ 'goimports': '-local github.com',
+      \ }
+
+augroup filetype_go
+    autocmd!
+    au BufWritePre *.go :GoImports
+augroup END
+

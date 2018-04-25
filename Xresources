@@ -113,9 +113,8 @@ URxvt.iso14755: False
 
 ! Other custom settings
 URxvt*loginShell: true
-URxvt.perl-ext-common:  default,matcher,font-size,keyboard-select,clipboard,url-select,confirm-paste,bell-command
-URxvt.bell-command: notify-send -t500 "Beep, Beep"
-URxvt.url-launcher: /usr/bin/sensible-browser
+URxvt.perl-ext-common:  default,matcher,font-size,keyboard-select,clipboard,url-select,confirm-paste
+URxvt.url-launcher: /usr/bin/firefox
 
 URxvt.matcher.button:   1
 !URxvt.keysym.C-Delete:    matcher:last
@@ -161,3 +160,16 @@ dzen2.background: black
 !Xft.hinting: 1
 !Xft.antialias: 1
 !Xft.rgba: rgb
+
+!rofi.color-window: argb:e81d1d26,argb:00292f37,#00BCD4
+!rofi.color-normal: argb:02000000,#B3B3AD,argb:02000000,argb:02000000,#00BCD4
+!rofi.color-active: argb:02000000,#B3B3AD,argb:02000000,argb:02000000,#B3B3AD
+!rofi.color-urgent: argb:02000000,#B3B3AD,argb:02000000,argb:02000000,#B3B3AD
+rofi.modi: combi
+rofi.combi-modi: run,ssh,drun
+rofi.terminal: urxvt
+rofi.lines: 15
+rofi.cycle: false
+rofi.show-icons: true
+rofi.fake-transparency: true
+!rofi.theme: /usr/share/rofi/themes/Arc-Dark.rasi
