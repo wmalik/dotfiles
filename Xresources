@@ -161,15 +161,10 @@ dzen2.background: black
 !Xft.antialias: 1
 !Xft.rgba: rgb
 
-!rofi.color-window: argb:e81d1d26,argb:00292f37,#00BCD4
-!rofi.color-normal: argb:02000000,#B3B3AD,argb:02000000,argb:02000000,#00BCD4
-!rofi.color-active: argb:02000000,#B3B3AD,argb:02000000,argb:02000000,#B3B3AD
-!rofi.color-urgent: argb:02000000,#B3B3AD,argb:02000000,argb:02000000,#B3B3AD
 rofi.modi: combi
-rofi.combi-modi: run,ssh,drun
+rofi.combi-modi: window,ssh,drun,run
 rofi.terminal: urxvt
 rofi.lines: 15
 rofi.cycle: false
 rofi.show-icons: true
 rofi.fake-transparency: true
-!rofi.theme: /usr/share/rofi/themes/Arc-Dark.rasi

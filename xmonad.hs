@@ -59,7 +59,7 @@ myBitmapsDir = ".xmonad/bitmaps/"
 main = do
     dzenLeftBar <- spawnPipe myXmonadBar
     dzenRightBar <- spawnPipe myStatusBar
-    xmonad $ withUrgencyHookC dzenUrgencyHook { args = ["-bg", "red", "fg", "black", "-y", "25"] } urgencyConfig { remindWhen = Every 15 } $ docks $ desktopConfig
+    xmonad $ ewmh $ withUrgencyHookC dzenUrgencyHook { args = ["-bg", "red", "fg", "black", "-y", "25"] } urgencyConfig { remindWhen = Every 15 } $ docks $ desktopConfig
       { workspaces          = myWorkspaces
       , keys                = keys'
       , startupHook         = setWMName "LG3D"
@@ -81,7 +81,7 @@ main = do
 myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
     [ ((0, 8), (\w -> windows W.focusDown)) -- useful when cycling through windows in a full screen layout
     , ((0, 9), (\w -> toggleWS)) -- cycle between current and last used workspace
-    , ((0, 7), (\w -> spawn "notify-send -t 5000 \"`curl ipinfo.io/ip || echo 'Got net?'`\""))
+    {-, ((0, 7), (\w -> spawn "notify-send -t 5000 \"`curl ipinfo.io/ip || echo 'Got net?'`\""))-}
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
     ++
@@ -144,8 +144,6 @@ myLogHook h = dynamicLogWithPP $ defaultPP
       , ppUrgent            =   dzenColor "black" "red" . pad
       , ppWsSep             =   " "
       , ppSep               =   " | "
-      {-, ppExtras = [wrapL "[" "]" $ date "%a %d %b"]-}
-      {-, ppExtras = [wrapL "[" "]" $ dzenColorL "green" "#2A4C3F" (logCmd "wget http://ipinfo.io/ip -qO -")]-}
       , ppLayout            =   dzenColor "#ebac54" "black" .
                                 (\x -> case x of
                                     "Spacing 3 Tall"         -> "^i(" ++ myBitmapsDir ++ "/tall.xbm)"
