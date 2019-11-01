@@ -44,8 +44,8 @@ URxvt*font: xft:Inconsolata:size=12
 URxvt*colorBD: RoyalBlue1
 URxvt*colorIT: pink
 
-urxvt*foreground: white
-urxvt*background: black
+URxvt*foreground: white
+URxvt*background: black
 
 
 ! Taken from http://bastian.rieck.ru/blog/posts/2013/making_urxvt_beautiful/
@@ -86,10 +86,12 @@ URxvt.url-launcher: /usr/bin/firefox
 
 URxvt.matcher.button:   1
 
-URxvt.keysym.C-Up:     perl:font-size:increase
-URxvt.keysym.C-Down:   perl:font-size:decrease
-URxvt.keysym.C-S-Up:   perl:font-size:incglobal
-URxvt.keysym.C-S-Down: perl:font-size:decglobal
+! XK_J
+URxvt.keysym.C-S-0x004b: perl:font-size:increase
+! XK_K
+URxvt.keysym.C-S-0x004a: perl:font-size:decrease
+URxvt.keysym.C-S-Up:     perl:font-size:incglobal
+URxvt.keysym.C-S-Down:   perl:font-size:decglobal
 URxvt.keysym.Shift-Up: command:\033]720;1\007
 URxvt.keysym.Shift-Down: command:\033]721;1\007
 
