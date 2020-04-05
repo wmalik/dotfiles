@@ -99,7 +99,6 @@ manageHook' = (composeAll . concat $
     , [className    =? c            --> doShift  "1"   |   c   <- myDev    ] -- move dev to main
     , [className    =? c            --> doShift  "2"    |   c   <- myWebs   ] -- move webs to main
     , [className    =? c            --> doShift  "4"   |   c   <- myChat  ]
-    , [className    =? c            --> doShift  "3"    |   c   <- myVim    ] -- move vim to vim
     , [className    =? c            --> doShift  "9"   |   c   <- myToys  ]
     , [className    =? c            --> doCenterFloat       |   c   <- myFloats ] -- float my floats
     , [name         =? n            --> doCenterFloat       |   n   <- myNames  ] -- float my names
@@ -115,12 +114,11 @@ manageHook' = (composeAll . concat $
         myWebs    = ["Nightly", "Firefox", "Firefox-esr", "Google-chrome","Chromium", "Chromium-browser","Iceweasel","iceweasel"]
         myChat  = ["Pidgin","Buddy List", "chat", "Slack", "Skype", "skype"]
         myDev   = ["urxvt"]
-        myVim   = ["Gvim"]
         myToys  = ["Conky"]
 
         -- resources
         -- xprop | grep WM_CLASS
-        myFloats  = ["notify-osd","Xmessage","XFontSel","Downloads","bashrun"]
+        myFloats  = ["vokoscreen","ffplay","notify-osd","Xmessage","XFontSel","Downloads","bashrun"]
         myIgnores = ["xfce4-notifyd","stalonetray","trayer","panel", "desktop","desktop_window","notify-osd", "Toplevel"]
 
         -- names
@@ -175,7 +173,7 @@ colorWhite          = "#CCCCC6"
 colorPurple         = "#8F00FF"
 
 colorNormalBorder   = "black"
-colorFocusedBorder  = "white"
+colorFocusedBorder  = colorPurple
 
 
 barFont  = "inconsolata"
@@ -207,34 +205,37 @@ largeXPConfig = mXPConfig
 keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     [
       ((modMask,                    xK_p     ), spawn "rofi -show")
+    , ((modMask .|. shiftMask,      xK_p     ), spawn "/usr/local/bin/myrofi")
+    , ((modMask .|. shiftMask,      xK_s     ), spawn "/usr/local/bin/rofi-pass")
     , ((modMask,                    xK_f), safePrompt "firefox" greenXPConfig)
     , ((modMask .|. shiftMask,      xK_Return), spawn $ XMonad.terminal conf)
     , ((modMask,                    xK_d     ), kill)
-    , ((modMask .|. shiftMask,      xK_c     ), kill)
+    , ((modMask .|. shiftMask,      xK_c     ), spawn "/usr/local/bin/countdown `rofi -dmenu -input /dev/null -p \"Countdown (seconds) > \"`")
     , ((0,                          xK_Insert), pasteSelection)
     , ((modMask,                    xK_Tab     ), toggleWS)
     , ((modMask,                    xK_n     ), spawn "urxvt -e wicd-curses")
     , ((modMask,                    xK_v     ), spawn "urxvt -e bash -c 'sudo tail -f /var/log/syslog'")
 
     -- Programs
-    , ((modMask,                    xK_Print ), spawn "cd ~/data/screenshots; scrot -u -e 'notify-send -t 2000 $f --icon=/home/arthur/data/screenshots/$f && feh --draw-filename --draw-tinted /home/arthur/data/screenshots/$f'")
+    , ((modMask,                    xK_Print ), spawn "output=~/data/screenshots/$(date +%s).png; maim --select --nokeyboard $output && notify-send -u low -i $output 'Got it!' && firefox $output")
     , ((modMask,                    xK_o     ), spawn "firefox")
-    , ((modMask .|. shiftMask,      xK_o     ), spawn "firefox --private-window")
-    , ((modMask,                    xK_s     ), spawn "keepass2")
     , ((modMask,                    xK_y     ), spawn "urxvt -e bash -c 'yubioath'")
+    , ((modMask,                    xK_g     ), spawn "urxvt -e bash -c 'dig +short google.com; ping 8.8.8.8'")
     , ((modMask .|. shiftMask,      xK_l     ), spawn "xscreensaver-command -lock")
 
     -- Media Keys
     , ((0,                          xF86XK_MonBrightnessDown), spawn "xbacklight -dec 5")
     , ((0,                          xF86XK_MonBrightnessUp  ), spawn "xbacklight -inc 5")
-    , ((0,                          xF86XK_AudioMute        ), spawn "amixer -q sset Master toggle")  -- XF86AudioMute
-    , ((0,                          xF86XK_AudioLowerVolume ), spawn "amixer -q sset Master 5%-; notify-send -t 100 `amixer get Master | egrep -o \"[0-9]+%\"` ") -- XF86AudioLowerVolume
-    , ((0,                          xF86XK_AudioRaiseVolume ), spawn "amixer -q sset Master 5%+; notify-send -t 100 `amixer get Master | egrep -o \"[0-9]+%\"`")  -- XF86AudioRaiseVolume.
-    , ((0,                          xF86XK_AudioPrev ),        spawn "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous")
-    , ((0,                          xF86XK_AudioNext ),        spawn "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next")
-    , ((0,                          xF86XK_AudioPlay ),        spawn "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause")  -- XF86AudioRaiseVolume.
+    , ((0,                          xF86XK_AudioMute        ), spawn "amixer -q sset Master toggle && notify-send -u low Mute?")  -- XF86AudioMute
+    , ((0,                          xF86XK_AudioLowerVolume ), spawn "amixer -q sset Master 5%-; notify-send -t 1000 `amixer get Master | egrep -o \"[0-9]+%\"` ") -- XF86AudioLowerVolume
+    , ((0,                          xF86XK_AudioRaiseVolume ), spawn "amixer -q sset Master 5%+; notify-send -t 1000 `amixer get Master | egrep -o \"[0-9]+%\"`")  -- XF86AudioRaiseVolume.
+    , ((0,                          xF86XK_AudioPrev ),        spawn "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous && notify-send -t 1000 'Previous track'")
+    , ((0,                          xF86XK_AudioNext ),        spawn "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next && notify-send -t 1000 'Next track'")
+    , ((0,                          xF86XK_AudioPlay ),        spawn "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause && notify-send -t 1000 'Play/Pause'")
     , ((modMask,                    xK_Down                 ), spawn "amixer -q sset Master 5%-")
     , ((modMask,                    xK_Up                   ), spawn "amixer -q sset Master 5%+")
+    , ((modMask .|. shiftMask,      xK_d                    ), spawn "setxkbmap de && notify-send 'Deutsch keyboard layout'")
+    , ((modMask .|. shiftMask,      xK_u                    ), spawn "setxkbmap us && notify-send 'English keyboard layout'")
 
     -- layouts
     , ((modMask,                    xK_space ), sendMessage NextLayout)
