@@ -46,6 +46,7 @@ alias fehi="feh -d -F --draw-tinted --info \"exif '%f' | grep 'Model\|DateTimeOr
 alias urgency='PS1="$PS1\a"'
 alias vim='TERM=rxvt-unicode-256color vim'
 alias jvim='jq . | vim +"set ft=json"'
+alias jless='jq -C . | less -R'
 alias ls='ls --color=auto'
 alias f='find . -name'
 alias g='git'
@@ -63,7 +64,8 @@ alias w="wicd-curses"
 alias holidays='gcal --holiday-list -N --cc-holidays=de_be'
 alias rand="cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1"
 alias h="heroku"
-alias n="nohup urxvt &>/dev/null &"
+alias n="notify-send -t 2000"
+alias sclone="sh -c 'date && [ $# -eq 2 ] && git clone $1 $2 && cd $2 && git shortlog -sne'"
 # TODO:
 # write a function clone() to do git clone $repo + cd dir + git stats
 
