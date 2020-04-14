@@ -5,6 +5,7 @@ import XMonad
 -- Prompt
 import XMonad.Prompt
 import XMonad.Prompt.Shell
+import XMonad.Prompt.Ssh
 import XMonad.Prompt.RunOrRaise (runOrRaisePrompt)
 import XMonad.Prompt.AppendFile (appendFilePrompt)
 import XMonad.Prompt.Window
@@ -14,7 +15,6 @@ import System.IO
 import System.Exit
 import XMonad.Util.Run
 import XMonad.Util.Paste
-import XMonad.Util.Loggers
 import XMonad.Actions.CycleWS
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
@@ -34,15 +34,25 @@ import XMonad.Layout.LayoutHints
 import XMonad.Layout.LayoutModifier
 import XMonad.Layout.Grid
 import XMonad.Layout.ShowWName
+import XMonad.Layout.Tabbed
+import XMonad.Layout.Accordion
+import XMonad.Layout.StackTile
+import XMonad.Layout.Cross
+import XMonad.Layout.DecorationMadness
 -- for chrome full screen
 import Graphics.X11.ExtraTypes.XF86
 import Data.Ratio ((%))
 import qualified XMonad.StackSet as W
 import qualified Data.Map as M
 
+import XMonad.Actions.SimpleDate
+
 import XMonad.Actions.UpdatePointer
 import XMonad.Config.Desktop
 import XMonad.Config.Gnome
+
+import XMonad.Util.Themes
+
 
 -- Config
 -- Define Terminal
@@ -52,13 +62,16 @@ modMask' = mod4Mask
 -- Define workspaces
 myWorkspaces    = ["1","2","3","4","5", "6", "7", "8", "9", "10"]
 myXmonadBar = "killall dzen2; dzen2 -dock -ta 'l' -tw 600 -e"
-myStatusBar = "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -dock -xs 2 -ta 'r' -e"
+myStatusBar = "conky -c ~/.xmonad/conky_dzen | dzen2 -dock -xs 2 -ta 'r' -e"
+bottomStatusBar = "conky -c ~/.xmonad/conky_dzen_bottom | dzen2 -x '0' -y '10000' -h '15'  -ta 'r' -dock -fn 'xft:Inconsolata:size=8'"
+
 myBitmapsDir = ".xmonad/bitmaps/"
 --
 -- Main
 main = do
     dzenLeftBar <- spawnPipe myXmonadBar
     dzenRightBar <- spawnPipe myStatusBar
+    dzenBottomBar <- spawnPipe bottomStatusBar
     xmonad $ ewmh $ withUrgencyHookC dzenUrgencyHook { args = ["-bg", "red", "fg", "black", "-y", "25"] } urgencyConfig { remindWhen = Every 15 } $ docks $ desktopConfig
       { workspaces          = myWorkspaces
       , keys                = keys'
@@ -70,7 +83,8 @@ main = do
       , normalBorderColor   = colorNormalBorder
       , focusedBorderColor  = colorFocusedBorder
       , borderWidth         = 1
-      , handleEventHook     = fullscreenEventHook --for chrome full screen-- {{{-- }}}
+      --for chrome full screen-- {{{-- }}}
+      , handleEventHook     = fullscreenEventHook  -- mayve bring back the ewmh handle hook to fix dunst focus?
       {-, startupHook         = spawn "~/.xmonad/scripts/on-start.sh"-}
       , terminal            = "urxvt"
       , focusFollowsMouse   = False
@@ -81,7 +95,7 @@ main = do
 myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
     [ ((0, 8), (\w -> windows W.focusDown)) -- useful when cycling through windows in a full screen layout
     , ((0, 9), (\w -> toggleWS)) -- cycle between current and last used workspace
-    {-, ((0, 7), (\w -> spawn "notify-send -t 5000 \"`curl ipinfo.io/ip || echo 'Got net?'`\""))-}
+    {- , ((0, 7), (\w -> spawn "amixer -q sset Master 5%-; notify-send -t 1000 `amixer get Master | egrep -o \"[0-9]+%\"` ")) -}
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
     ++
@@ -155,9 +169,17 @@ myLogHook h = dynamicLogWithPP $ defaultPP
 
 -- Layout
 
-customLayout = avoidStruts $ tiled1 ||| Mirror tiled1 ||| Full
-   where
-     tiled1 = spacing 3 $ Tall 1 (2/100) (1/2)
+tiled = Tall 1 (2/100) (1/2)
+customLayout = avoidStruts $ smartBorders(
+                                          tiled
+                                      ||| Mirror tiled
+                                      {- ||| circleSimpleDefaultResizable -}
+                                      ||| Accordion
+                                      ||| floatSimpleSimple
+                                      ||| StackTile 1 (3/100) (1/2)
+                                      ||| tabbedBottom shrinkText (theme donaldTheme)
+                                      ||| simpleCross
+                             )
 
 --}}}
 -- Theme {{{
@@ -224,11 +246,11 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask .|. shiftMask,      xK_l     ), spawn "xscreensaver-command -lock")
 
     -- Media Keys
-    , ((0,                          xF86XK_MonBrightnessDown), spawn "xbacklight -dec 5")
-    , ((0,                          xF86XK_MonBrightnessUp  ), spawn "xbacklight -inc 5")
-    , ((0,                          xF86XK_AudioMute        ), spawn "amixer -q sset Master toggle && notify-send -u low Mute?")  -- XF86AudioMute
-    , ((0,                          xF86XK_AudioLowerVolume ), spawn "amixer -q sset Master 5%-; notify-send -t 1000 `amixer get Master | egrep -o \"[0-9]+%\"` ") -- XF86AudioLowerVolume
-    , ((0,                          xF86XK_AudioRaiseVolume ), spawn "amixer -q sset Master 5%+; notify-send -t 1000 `amixer get Master | egrep -o \"[0-9]+%\"`")  -- XF86AudioRaiseVolume.
+    , ((0,                          xF86XK_MonBrightnessDown), spawn "xbacklight -dec 5; xbacklight | dzen2-gdbar -fg yellow -h 10 -w 100 | dzen2 -p 1")
+    , ((0,                          xF86XK_MonBrightnessUp  ), spawn "xbacklight -inc 5; xbacklight | dzen2-gdbar -fg yellow -h 10 -w 100 | dzen2 -p 1")
+    , ((0,                          xF86XK_AudioMute        ), spawn "pulsemixer --toggle-mute")
+    , ((0,                          xF86XK_AudioLowerVolume ), spawn "pulsemixer --change-volume -5; pulsemixer --get-volume | awk '{print $1}' | dzen2-gdbar -fg purple -h 10 -w 500 | dzen2 -p 2")
+    , ((0,                          xF86XK_AudioRaiseVolume ), spawn "pulsemixer --change-volume +5; pulsemixer --get-volume | awk '{print $1}' | dzen2-gdbar -fg purple -h 10 -w 500 | dzen2 -p 2")
     , ((0,                          xF86XK_AudioPrev ),        spawn "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous && notify-send -t 1000 'Previous track'")
     , ((0,                          xF86XK_AudioNext ),        spawn "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next && notify-send -t 1000 'Next track'")
     , ((0,                          xF86XK_AudioPlay ),        spawn "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause && notify-send -t 1000 'Play/Pause'")
@@ -257,7 +279,8 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask,                    xK_period), sendMessage (IncMasterN (-1)))               -- Deincrement the number of windows in the master area
 
     --Urgency hooks
-    , ((modMask,                    xK_BackSpace), focusUrgent)
+    {- , ((modMask,                    xK_BackSpace), focusUrgent) -}
+    , ((modMask,                    xK_BackSpace), date)
 
     -- workspaces
     , ((modMask .|. controlMask,   xK_Right), nextWS)
@@ -267,16 +290,21 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 
     -- quit, or restart
     , ((modMask,                   xK_c    ), spawn "killall -SIGUSR1 conky")
-    , ((modMask,                   xK_x    ), spawn "killall conky; conky -c ~/.xmonad/.conky_dzen | dzen2 -xs 2 -ta 'r' -e 'onstart=lower'")
+    , ((modMask,                   xK_x    ), spawn "killall conky; conky -c ~/.xmonad/conky_dzen | dzen2 -xs 2 -ta 'r' -e 'onstart=lower'; conky -c ~/.xmonad/conky_dzen_bottom | dzen2 -x '0' -y '10000' -h '15' -ta 'r' -dock -fn 'xft:Inconsolata:size=8'")
     , ((modMask,                   xK_F1   ), spawn "~/.screenlayout/laptop.sh")
     , ((modMask,                   xK_F2   ), spawn "~/.screenlayout/work.sh")
     , ((modMask,                   xK_F3   ), spawn "~/.screenlayout/work_mirror.sh")
-    , ((modMask,                   xK_F12  ), spawn "sudo pm-suspend-hybrid")
-    , ((modMask,                   xK_r    ), spawn "/usr/bin/xmonad --recompile && /usr/bin/xmonad --restart")
+    , ((modMask,                   xK_r    ), spawn "killall conky dzen2; /usr/bin/xmonad --recompile && /usr/bin/xmonad --restart")
     , ((modMask,               xK_Down),  nextWS)
     , ((modMask,               xK_Up),    prevWS)
     , ((modMask .|. shiftMask, xK_Down),  shiftToNext)
     , ((modMask .|. shiftMask, xK_Up),    shiftToPrev)
+    , ((modMask .|. shiftMask, xK_n), do
+      spawn ("date>>" ++ "data/notes/quicknotes.txt")
+      appendFilePrompt def "data/notes/quicknotes.txt"
+    )
+    , ((modMask .|. controlMask, xK_s), sshPrompt def)
+
     ]
     ++
     -- mod-[1..9] %! Switch to workspace N

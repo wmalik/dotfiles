@@ -1,0 +1,68 @@
+# Author: Wasif Malik (wmalik@gmail.com)
+
+out_to_console yes
+out_to_x no
+update_interval 1
+short_units yes
+if_up_strictness link
+cpu_avg_samples 4
+border_outer_margin 20
+border_inner_margin 20
+gap_y 40
+
+# Conditional warning template
+template0 ${if_match \1 \2 \3}\4${endif}
+template1 wlp4s0
+template2 enp0s31f6
+
+TEXT
+${if_match ${ibm_fan} > 0} \
+Fan:${ibm_fan}\
+${endif}\
+${if_match ${acpitemp} > 70}^bg(red)Hot (${acpitemp}C)^bg() ${endif}\
+${if_match ${swapperc} > 35}^bg(red)Swap (${swapperc}%)^bg() ${endif}\
+${if_mounted /mnt}\
+^fg(Orange)Mounted /mnt ^fg() \
+${endif}\
+^bg(Dark Slate Gray)\
+^bg() \
+^ca(1, urxvt -e top)\
+${if_match ${loadavg 1} > 1.0}^bg()^fg(Gray)${loadavg 1}, ${loadavg 2}, ${loadavg 3} ${endif}\
+^bg(black)^fg(Dodger Blue)R:^fg(Dark Gray)${diskio_read} ^fg(Sea Green)W:^fg(Dark Gray)${diskio_write} \
+^ca()\
+Disk: ${fs_free}\
+${template0 ${tcp_portmon\ 22\ 22\ count} > 0 ^fg(White)^bg(Red)SSH}\
+${template0 ${fs_free_perc} < 5 ^fg(Black)^bg(Orange)\ ${fs_free}\ }\
+${if_up ${template2}}\
+^ca(1, urxvt -e wicd-curses)\
+^bg(Dark Green)^fg() ${template2} ^bg(Dark Slate Gray) ${addr ${template2}} \
+^ca()\
+^ca(1, urxvt -e ifstat)\
+${if_match ${upspeedf ${template2}} > 10}^fg(Black)^bg(Light Blue)↑${upspeedf ${template2}}K ^bg()${endif}\
+${if_match ${downspeedf ${template2}} > 10}^fg(White)^bg(Blue)↓${downspeedf ${template2}}K ^bg()${endif}\
+ \
+^ca()\
+${endif} \
+${if_up ${template1}}\
+^ca(1, urxvt -e wicd-curses)\
+^bg(Dark Slate Gray)^fg()\
+ ^fg(Golden) ^fg(Orange)${wireless_essid ${template1}} ${wireless_link_qual_perc ${template1}}% [${wireless_freq ${template1}}] [${wireless_channel ${template1}}]  ${addr ${template1}}^fg() \
+^ca()\
+^ca(1, urxvt -e ifstat)\
+${if_match ${upspeedf ${template1}} > 10}^fg(Black)^bg(Light Blue)↑${upspeedf ${template1}}K ^bg()${endif}\
+${if_match ${downspeedf ${template1}} > 10}^fg(White)^bg(Blue)↓${downspeedf ${template1}}K ^bg()${endif}\
+ \
+^ca()\
+${endif}\
+^ca(1, urxvt -e top)\
+${if_match ${memperc} > 50}\
+^bg(Golden Rod) ^fg(Black)MEM: ^fg(black)${memperc}% \
+${endif}\
+${if_match ${cpu cpu0} > 50}\
+^bg(Dark Gray)^fg(Black) CPUs: [${cpu cpu1} ${cpu cpu2} ${cpu cpu3} ${cpu cpu4}]% \
+${endif}\
+^ca()\
+${if_up tun0}\
+^bg(Blue)^fg(White) VPN \
+(${totalup tun0}) \
+${endif}\
