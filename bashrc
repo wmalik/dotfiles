@@ -57,7 +57,8 @@ alias tree="tree -AC"
 alias now="date +%s"
 alias a='sudo apt'
 alias xm="vim ~/.xmonad/xmonad.hs"
-alias xc="vim ~/.xmonad/.conky_dzen"
+alias xc="vim ~/.xmonad/conky_dzen"
+alias xcb="vim ~/.xmonad/conky_dzen_bottom"
 alias xr="vim ~/.Xresources; xrdb ~/.Xresources"
 alias grep="grep --color"
 alias w="wicd-curses"
@@ -66,6 +67,7 @@ alias rand="cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1"
 alias h="heroku"
 alias n="notify-send -t 2000"
 alias sclone="sh -c 'date && [ $# -eq 2 ] && git clone $1 $2 && cd $2 && git shortlog -sne'"
+alias v="vim"
 # TODO:
 # write a function clone() to do git clone $repo + cd dir + git stats
 

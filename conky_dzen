@@ -11,8 +11,14 @@ border_inner_margin 20
 gap_y 40
 
 TEXT
-[${exec setxkbmap -query | grep layout | awk '{print $2}'}] \
-${exec pulsemixer --get-volume | awk '{print $1}' | dzen2-gdbar -fg purple -h 2} \
+\
+^fg(DarkGray)${wireless_essid wlp4s0} [${wireless_freq wlp4s0}]^fg()\
+^ca(1, pavucontrol)${exec pulsemixer --list-sinks | grep Sink: | grep Default | awk -F, '{print $2}' | awk -F: '{print $2}'}^ca()\
+${if_match ${exec pulsemixer --get-mute} > 0}\
+ ^ca(1, pulsemixer --toggle-mute)M^ca() ^ca(1, pavucontrol)${exec pulsemixer --get-volume | awk '{print $1}' | dzen2-gdbar -fg red -h 12 -w 80 -s o}^ca() \
+${else}\
+ ^ca(1, pulsemixer --toggle-mute)♫^ca() ^ca(1, pavucontrol)${exec pulsemixer --get-volume | awk '{print $1}' | dzen2-gdbar -fg purple -h 12 -w 80 -s o}^ca() \
+${endif}\
 ${if_mounted /media/raaz} Mounted /mnt/raaz ${endif}\
 ${if_match ${new_mails /var/mail/arthur 60} > 1}^bg(Orange)^fg(black) Mail ^bg()^fg()${endif}\
 ${if_mounted /mnt}\
@@ -21,13 +27,21 @@ ${endif}\
 ^bg(Dark Slate Gray)\
 ^bg() \
 ${if_running transmission-gt}^bg(Saddle Brown)^fg(white) Torrents ${endif}\
-^ca(1, urxvt -fn xft:In consolata:size=30 -e cal -A 3)\
-^bg(black)^fg(Dark Gray) ${time %a %F W%V} ^fg(white)${time %R}^fg() \
+(${exec setxkbmap -query | grep layout | awk '{print $2}'}) \
+^ca(1, urxvt -fn xft:In consolata:size=30 -e cal -A 3)^bg(black)^fg(Dark Gray) ${time %a %F W%V} ^fg(white)${time %R}^fg()^ca()\
+${if_match ${battery_percent BAT0} < 50} \
+${exec acpitool  --battery | grep Rema | awk '{print $6}' | dzen2-gdbar -w 25 -fg red -bg white -h 10 -s o} \
+${else} \
+${exec acpitool  --battery | grep Rema | awk '{print $6}' | dzen2-gdbar -w 25 -fg green -bg white -h 10 -s o} \
+${endif}\
+${if_match "${exec acpitool --battery | grep Charging | awk '{print $4}'}" == "Discharging"}\
+${else}\
+${if_match "${exec acpitool --battery | grep Charging | awk '{print $4}'}" == "Full"}\
+^fg(Green)⚡^fg()\
+${else}\
+^fg(Yellow)⚡^fg()\
+${endif}\
+${endif}\
+^ca(1, urxvt -e vim -p ~/.xmonad/xmonad.hs ~/.xmonad/conky_dzen*)\
+⚙\
 ^ca()\
-^bg(Dark Slate Gray)^fg(Aqua Marine) ^fg(Alice Blue)${battery_short BAT0}^bg() \
-${if_match ${battery_percent BAT0} < 20} \
-^bg(Red) ^fg(White)Battery Low^bg() \
-${endif}\
-${if_match ${exec pulsemixer --get-mute} > 0}\
-[Mute] \
-${endif}\

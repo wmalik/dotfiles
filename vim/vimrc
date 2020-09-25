@@ -14,6 +14,7 @@ set nocompatible	" Use Vim defaults instead of 100% vi compatibility
 set nofoldenable
 colorscheme jellybeans
 "colorscheme distinguished
+
 syntax on
 filetype on
 filetype plugin on
@@ -52,9 +53,7 @@ if has("gui_running")
     set mouse=a
     set guioptions=egmrt
     set guioptions-=m
-    "set guifont=Inconsolata\ Medium\ 12
     set guifont=Inconsolata\ 12
-    "set guifont=Neep\ 12 "did not work
     "
     " Set cursor color in different modes
     highlight Cursor guifg=black guibg=lightgreen
@@ -62,7 +61,6 @@ if has("gui_running")
     set guicursor=n-v-c:block-Cursor
     set guicursor+=i:ver25-iCursor
     set guicursor+=n-v-c:blinkon0
-    "set guicursor+=i:blinkwait10
     hi StatusLine guibg=white guifg=royalblue
 endif
 
@@ -75,7 +73,6 @@ runtime! ftplugin/man.vim
 " searches for a tags file in the higher level directories until it is found
 " enables tag browsing no matter where the src is
 set tags=./tags;/
-set tags+=/home/arthur/.rbenv/versions/2.3.4/lib/ruby/gems/2.3.0/gems/tags
 " highlight extra whitespace
 highlight ExtraWhitespace ctermbg=blue guibg=blue
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
@@ -83,9 +80,7 @@ autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 set wildignore=*.o,*~,*.beam,*.swf,*.mp3,*.jpg,*.png,ebin,.git
-if filereadable(".vimrc.project")
-    so .vimrc.project
-endif
+
 "}}}
 
 " Shortcuts {{{
@@ -97,29 +92,24 @@ command! -nargs=* -complete=shellcmd R new | setlocal buftype=nofile bufhidden=h
 nmap <leader>f :R grep -sirn <c-r>=expand("<cword> *")<cr> .<cr> :set ft=sh<cr>
 
 " shortcut to find a string in multiple src dirs, example :F something
-"command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | set ft=erlang | r !grep -sirn --exclude=tags --exclude-dir=log --exclude-dir=ebin <args> .
-"command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | set ft=erlang | r !ag --vimgrep <args>
 command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | r !Ack --vimgrep <args>
 
 " Open a scratch buffer
 command! S new | setlocal buftype=nofile bufhidden=hide noswapfile
-command! T tabnew | setlocal buftype=nofile bufhidden=hide noswapfile
-" Open my notes files in a new buffer and go to the last line
-command! Notes tabnew ~/.notes | set filetype=markdown | %
+command! ST tabnew | setlocal buftype=nofile bufhidden=hide noswapfile
 
 " Get the current unix timestamp
 command! Timestamp r! date \+\%s
 " Get nicely formatted time stamp
-nnoremap <leader>d :r! date \+\[\%Y-\%m-\%d\ \%H:\%M:\%S\]<cr>
-
+nnoremap <leader>d :r! date \+\%Y-\%m-\%d\ \%H:\%M:\%S<cr>
+nnoremap <leader>t :r! date -d\@<C-r><C-w><cr>
+nnoremap <leader>T :r! date \+\%s<cr>
 
 let mapleader = ","
-"inoremap jk <Esc>
+inoremap jk <Esc>
 nnoremap <leader>w <C-w>v<C-w>l
 nnoremap <C-j> <C-w>w
 nnoremap <C-k> <C-w>W
-nnoremap <Backspace> <C-w>w
-nnoremap <S-Backspace> <C-w>W
 nnoremap <leader>n :NERDTreeToggle<CR>
 nnoremap <C-l> :tabnext<CR>
 nnoremap <C-h> :tabprev<CR>
@@ -131,7 +121,6 @@ noremap <silent> <Space> :noh<Bar>:echo<CR>
 nnoremap <leader>k :set list!<CR>
 nnoremap :W :w
 nnoremap :Set :set
-nnoremap Y 0y$
 nnoremap T :Texplore<CR>
 inoremap <C-a> <C-o>^
 inoremap <C-e> <C-o>$
@@ -142,14 +131,7 @@ set mouse=a
 "}}}
 
 " Erlang {{{
-"remove an erlang binary term
 nnoremap <leader>B 2F<d2f>i
-"ignore binary files
-" remove trailing whitespace and save the file
-nnoremap <leader><Space> $x<Esc>:w<CR>
-"let g:erlangManPath = "/usr/share/man/man1"
-"let g:erlangHighlightErrors = 0
-"let g:erlangHighlightBif = 1
 command! Er set ft=erlang
 "}}}
 
@@ -173,6 +155,7 @@ iabbrev ldeb lager:debug("", [])
 iabbrev ei error_logger:info_msg("", [])
 iabbrev ew error_logger:warning_msg("", [])
 iabbrev ee error_logger:error_msg("", [])
+iabbrev fp fmt.Printf("\nDEBUG: %+v\n", abc)
 "iabbrev pgv proplists:get_value(
 
 nnoremap <leader>ve :tabnew $MYVIMRC<cr>
@@ -207,29 +190,6 @@ nnoremap <leader>; :normal! mqA;<esc>`q
 " generate exuberant ctags for all directories excluding the assets directory
 nnoremap <leader>ct :!ctags -R --exclude=assets *<cr>
 
-
-" Notes {{{
-" Taken from bare bones vim http://vimeo.com/65250028
-" makes navigation easier without ctags (use gf)
-" set path=**
-" set suffixesadd=.erl,.hrl
-" }}}
-
-
-"augroup filetype_erl
-    "autocmd!
-    "autocmd FileType,BufNewFile,BufRead escript setlocal filetype=erlang
-    "autocmd FileType,BufNewFile,BufRead *.app.src setlocal filetype=erlang
-    "autocmd FileType,BufNewFile,BufRead rebar.config setlocal filetype=erlang
-    "autocmd FileType,BufNewFile,BufRead *.term setlocal filetype=erlang
-    "command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | set ft=erlang | r !grep -sirn --exclude=tags --exclude-dir=log --exclude-dir=.eunit --exclude-dir=.git --exclude-dir=ebin <args> .
-    "nnoremap <leader>ct :ErlangTags<cr>
-    "command! -nargs=1 Erl Man 3erl <args>
-    "nnoremap <leader>ei yiwoerror_logger:info_msg("<esc>pa ~p~n", [<esc>pa]),<esc>
-    "vnoremap <leader>ei "myoerror_logger:info_msg("<esc>"mpa ~p~n", [<esc>"mpa]),<esc>
-
-"augroup END
-
 augroup filetype_html
     autocmd!
     autocmd FileType,BufNewFile,BufRead *.mustache setlocal filetype=html
@@ -250,11 +210,9 @@ inoremap <C-h> <left>
 inoremap <C-l> <right>
 inoremap <C-j> <down>
 inoremap <C-k> <up>
-command! Z tabnew %
 xnoremap . :norm.<CR>
 
-
-" Move visual block
+" Move visual block (only for eye-candy)
 vnoremap J :m '>+1<CR>gvgv
 vnoremap K :m '<-2<CR>gvgv
 
@@ -280,46 +238,26 @@ endif
 " local cd into the windows file
 "autocmd BufEnter * silent! lcd %:p:h
 
-" syntastic
-"set statusline+=%#warningmsg#
-"set statusline+=%*
-"let g:syntastic_always_populate_loc_list = 1
-"let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-"let g:syntastic_check_on_wq = 0
-let g:syntastic_python_checkers = []
-
 set clipboard=unnamedplus
 
 let g:ycm_key_list_select_completion=[]
 let g:ycm_key_list_previous_completion=[]
 let g:UltiSnipsExpandTrigger="<c-j>"
 
-"let g:syntastic_go_checkers = []
-"let g:syntastic_go_gometalinter_args = ['--disable-all']
-"let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['go'] }
+set exrc
 
-let g:go_metalinter_autosave = 1
-let g:go_metalinter_autosave_enabled = []
-autocmd FileType go nmap <leader>b :GoBuild<cr>
-autocmd FileType go nmap <leader>t :GoTestCompile<cr>
-autocmd FileType go nmap <leader>i :GoInfo<cr>
-autocmd FileType go nmap <leader>v :GoVet<cr>
-autocmd FileType go nmap <leader>d :GoDescribe<cr>
+let NERDSpaceDelims=1
+let NERDDefaultAlign='left'
 
-let g:go_play_browser_command = '/usr/bin/firefox'
-let g:go_info_mode = 'guru'
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_types = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_format_strings = 1
-let g:go_fmt_options = {
-      \ 'goimports': '-local github.com',
-      \ }
+noremap <silent> <Leader>vS :<C-u>let @z=&so<CR>:set so=0 noscb<CR>:bo vs<CR>Ljzt:setl scb<CR><C-w>p:setl scb<CR>:let &so=@z<CR>
 
-augroup filetype_go
-    autocmd!
-    au BufWritePre *.go :GoImports
-augroup END
+" modify selected text using combining diacritics
+command! -range -nargs=0 Overline        call s:CombineSelection(<line1>, <line2>, '0305')
+command! -range -nargs=0 Underline       call s:CombineSelection(<line1>, <line2>, '0332')
+command! -range -nargs=0 DoubleUnderline call s:CombineSelection(<line1>, <line2>, '0333')
+command! -range -nargs=0 Strikethrough   call s:CombineSelection(<line1>, <line2>, '0336')
 
+function! s:CombineSelection(line1, line2, cp)
+  execute 'let char = "\u'.a:cp.'"'
+  execute a:line1.','.a:line2.'s/\%V[^[:cntrl:]]/&'.char.'/ge'
+endfunction

@@ -1,7 +1,7 @@
 -- Author: Wasif Malik (wmalik@gmail.com)
 
 -- Imports
-import XMonad
+import XMonad hiding ( (|||) )
 -- Prompt
 import XMonad.Prompt
 import XMonad.Prompt.Shell
@@ -26,6 +26,8 @@ import XMonad.Hooks.EwmhDesktops
 import XMonad.Layout.NoBorders (smartBorders, noBorders)
 import XMonad.Layout.PerWorkspace (onWorkspace, onWorkspaces)
 import XMonad.Layout.Reflect (reflectHoriz)
+import XMonad.Layout hiding ( (|||) )
+import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.IM
 import XMonad.Layout.SimpleFloat
 import XMonad.Layout.Spacing
@@ -155,15 +157,9 @@ myLogHook h = dynamicLogWithPP $ defaultPP
       , ppHiddenNoWindows   =   dzenColor "#3D3D3D" "black" . pad
       , ppUrgent            =   dzenColor "black" "red" . pad
       , ppWsSep             =   " "
-      , ppSep               =   " | "
-      , ppLayout            =   dzenColor "#ebac54" "black" .
-                                (\x -> case x of
-                                    "Spacing 3 Tall"         -> "^i(" ++ myBitmapsDir ++ "/tall.xbm)"
-                                    "Mirror Spacing 3 Tall"  -> "^i(" ++ myBitmapsDir ++ "/mtall.xbm)"
-                                    "Full"                   -> "^i(" ++ myBitmapsDir ++ "/full.xbm)"
-                                    _                        -> x
-                                )
-      , ppTitle             =   dzenColor "black" "gray" . dzenEscape . (" "++) . (++" ")
+      , ppSep               =   " "
+      , ppLayout            =   dzenColor "#ebac54" "black"
+      , ppTitle             =   dzenColor "white" "black"
       , ppOutput            =   hPutStrLn h
     }
 
@@ -173,12 +169,11 @@ tiled = Tall 1 (2/100) (1/2)
 customLayout = avoidStruts $ smartBorders(
                                           tiled
                                       ||| Mirror tiled
-                                      {- ||| circleSimpleDefaultResizable -}
                                       ||| Accordion
-                                      ||| floatSimpleSimple
-                                      ||| StackTile 1 (3/100) (1/2)
                                       ||| tabbedBottom shrinkText (theme donaldTheme)
-                                      ||| simpleCross
+                                      {- ||| simpleCross -}
+                                      {- ||| StackTile 1 (3/100) (1/2) -}
+                                      {- ||| circleSimpleDefaultResizable -}
                              )
 
 --}}}
@@ -229,12 +224,12 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
       ((modMask,                    xK_p     ), spawn "rofi -show")
     , ((modMask .|. shiftMask,      xK_p     ), spawn "/usr/local/bin/myrofi")
     , ((modMask .|. shiftMask,      xK_s     ), spawn "/usr/local/bin/rofi-pass")
-    , ((modMask,                    xK_f), safePrompt "firefox" greenXPConfig)
+    , ((modMask,                    xK_f     ), safePrompt "firefox" greenXPConfig)
     , ((modMask .|. shiftMask,      xK_Return), spawn $ XMonad.terminal conf)
     , ((modMask,                    xK_d     ), kill)
     , ((modMask .|. shiftMask,      xK_c     ), spawn "/usr/local/bin/countdown `rofi -dmenu -input /dev/null -p \"Countdown (seconds) > \"`")
     , ((0,                          xK_Insert), pasteSelection)
-    , ((modMask,                    xK_Tab     ), toggleWS)
+    , ((modMask,                    xK_Tab   ), toggleWS)
     , ((modMask,                    xK_n     ), spawn "urxvt -e wicd-curses")
     , ((modMask,                    xK_v     ), spawn "urxvt -e bash -c 'sudo tail -f /var/log/syslog'")
 
@@ -246,37 +241,37 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask .|. shiftMask,      xK_l     ), spawn "xscreensaver-command -lock")
 
     -- Media Keys
-    , ((0,                          xF86XK_MonBrightnessDown), spawn "xbacklight -dec 5; xbacklight | dzen2-gdbar -fg yellow -h 10 -w 100 | dzen2 -p 1")
-    , ((0,                          xF86XK_MonBrightnessUp  ), spawn "xbacklight -inc 5; xbacklight | dzen2-gdbar -fg yellow -h 10 -w 100 | dzen2 -p 1")
+    , ((0,                          xF86XK_MonBrightnessDown), spawn "xbacklight -dec 5; xbacklight | dzen2-gdbar -fg yellow -h 10 -w 100 -s o | dzen2 -p 1")
+    , ((0,                          xF86XK_MonBrightnessUp  ), spawn "xbacklight -inc 5; xbacklight | dzen2-gdbar -fg yellow -h 10 -w 100 -s o | dzen2 -p 1")
     , ((0,                          xF86XK_AudioMute        ), spawn "pulsemixer --toggle-mute")
-    , ((0,                          xF86XK_AudioLowerVolume ), spawn "pulsemixer --change-volume -5; pulsemixer --get-volume | awk '{print $1}' | dzen2-gdbar -fg purple -h 10 -w 500 | dzen2 -p 2")
-    , ((0,                          xF86XK_AudioRaiseVolume ), spawn "pulsemixer --change-volume +5; pulsemixer --get-volume | awk '{print $1}' | dzen2-gdbar -fg purple -h 10 -w 500 | dzen2 -p 2")
-    , ((0,                          xF86XK_AudioPrev ),        spawn "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous && notify-send -t 1000 'Previous track'")
-    , ((0,                          xF86XK_AudioNext ),        spawn "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next && notify-send -t 1000 'Next track'")
-    , ((0,                          xF86XK_AudioPlay ),        spawn "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause && notify-send -t 1000 'Play/Pause'")
+    , ((0,                          xF86XK_AudioLowerVolume ), spawn "pulsemixer --change-volume -5; pulsemixer --get-volume | awk '{print $1}' | dzen2-gdbar -fg purple -h 10 -w 100 -s o | dzen2 -p 1")
+    , ((0,                          xF86XK_AudioRaiseVolume ), spawn "pulsemixer --change-volume +5; pulsemixer --get-volume | awk '{print $1}' | dzen2-gdbar -fg purple -h 10 -w 100 -s o | dzen2 -p 1")
+    , ((0,                          xF86XK_AudioPrev        ), spawn "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous && notify-send -t 1000 'Previous track'")
+    , ((0,                          xF86XK_AudioNext        ), spawn "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next && notify-send -t 1000 'Next track'")
+    , ((0,                          xF86XK_AudioPlay        ), spawn "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause && notify-send -t 1000 'Play/Pause'")
     , ((modMask,                    xK_Down                 ), spawn "amixer -q sset Master 5%-")
     , ((modMask,                    xK_Up                   ), spawn "amixer -q sset Master 5%+")
     , ((modMask .|. shiftMask,      xK_d                    ), spawn "setxkbmap de && notify-send 'Deutsch keyboard layout'")
     , ((modMask .|. shiftMask,      xK_u                    ), spawn "setxkbmap us && notify-send 'English keyboard layout'")
 
     -- layouts
-    , ((modMask,                    xK_space ), sendMessage NextLayout)
-    , ((modMask .|. shiftMask,      xK_space ), setLayout $ XMonad.layoutHook conf)          -- reset layout on current desktop to default
-    , ((modMask,                    xK_b     ), sendMessage ToggleStruts)
+    , ((modMask,                    xK_space                ), sendMessage NextLayout)
+    , ((modMask .|. shiftMask,      xK_space                ), setLayout $ XMonad.layoutHook conf)          -- reset layout on current desktop to default
+    , ((modMask,                    xK_b                    ), sendMessage ToggleStruts)
     , ((modMask .|. shiftMask, xK_g     ), windowPrompt
         def { autoComplete = Just 500000 }
         Goto allWindows)
-    , ((modMask,                    xK_z     ), windows W.focusDown)
-    , ((modMask,                    xK_j     ), windows W.focusDown)
-    , ((modMask,                    xK_k     ), windows W.focusUp  )
-    , ((modMask .|. shiftMask,      xK_j     ), windows W.swapDown)                          -- swap the focused window with the next window
-    , ((modMask .|. shiftMask,      xK_k     ), windows W.swapUp)                            -- swap the focused window with the previous window
-    , ((modMask,                    xK_Return), windows W.swapMaster)
-    , ((modMask,                    xK_t     ), withFocused $ windows . W.sink)              -- Push window back into tiling
-    , ((modMask,                    xK_h     ), sendMessage Shrink)                          -- %! Shrink a master area
-    , ((modMask,                    xK_l     ), sendMessage Expand)                          -- %! Expand a master area
-    , ((modMask,                    xK_comma ), sendMessage (IncMasterN 1))                  -- Increment the number of windows in the master area
-    , ((modMask,                    xK_period), sendMessage (IncMasterN (-1)))               -- Deincrement the number of windows in the master area
+    , ((modMask,                    xK_z                    ), windows W.focusDown)
+    , ((modMask,                    xK_j                    ), windows W.focusDown)
+    , ((modMask,                    xK_k                    ), windows W.focusUp  )
+    , ((modMask .|. shiftMask,      xK_j                    ), windows W.swapDown)
+    , ((modMask .|. shiftMask,      xK_k                    ), windows W.swapUp)
+    , ((modMask,                    xK_Return               ), windows W.swapMaster)
+    , ((modMask,                    xK_t                    ), withFocused $ windows . W.sink)
+    , ((modMask,                    xK_h                    ), sendMessage Shrink)
+    , ((modMask,                    xK_l                    ), sendMessage Expand)
+    , ((modMask,                    xK_comma                ), sendMessage (IncMasterN 1))
+    , ((modMask,                    xK_period               ), sendMessage (IncMasterN (-1)))
 
     --Urgency hooks
     {- , ((modMask,                    xK_BackSpace), focusUrgent) -}
@@ -303,7 +298,9 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
       spawn ("date>>" ++ "data/notes/quicknotes.txt")
       appendFilePrompt def "data/notes/quicknotes.txt"
     )
+    , ((modMask .|. controlMask, xK_n), spawn "urxvt -e vim data/notes/quicknotes.txt")
     , ((modMask .|. controlMask, xK_s), sshPrompt def)
+    , ((modMask .|. shiftMask, xK_t), sendMessage $ JumpToLayout "Tabbed Bottom Simplest")
 
     ]
     ++
