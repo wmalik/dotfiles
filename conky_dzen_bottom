@@ -12,13 +12,11 @@ gap_y 40
 
 # Conditional warning template
 template0 ${if_match \1 \2 \3}\4${endif}
-template1 wlp4s0
+template1 wlp59s0
 template2 enp0s31f6
 
 TEXT
-${if_match ${ibm_fan} > 0} \
-Fan:${ibm_fan}\
-${endif}\
+[temp: ${acpitemp}] \
 ${if_match ${acpitemp} > 70}^bg(red)Hot (${acpitemp}C)^bg() ${endif}\
 ${if_match ${swapperc} > 35}^bg(red)Swap (${swapperc}%)^bg() ${endif}\
 ${if_mounted /mnt}\

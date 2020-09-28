@@ -65,7 +65,7 @@ modMask' = mod4Mask
 myWorkspaces    = ["1","2","3","4","5", "6", "7", "8", "9", "10"]
 myXmonadBar = "killall dzen2; dzen2 -dock -ta 'l' -tw 600 -e"
 myStatusBar = "conky -c ~/.xmonad/conky_dzen | dzen2 -dock -xs 2 -ta 'r' -e"
-bottomStatusBar = "conky -c ~/.xmonad/conky_dzen_bottom | dzen2 -x '0' -y '10000' -h '15'  -ta 'r' -dock -fn 'xft:Inconsolata:size=8'"
+bottomStatusBar = "conky -c ~/.xmonad/conky_dzen_bottom | dzen2 -x '0' -y '10000' -h '15'  -ta 'r' -dock"
 
 myBitmapsDir = ".xmonad/bitmaps/"
 --
@@ -118,7 +118,7 @@ manageHook' = (composeAll . concat $
     , [className    =? c            --> doShift  "9"   |   c   <- myToys  ]
     , [className    =? c            --> doCenterFloat       |   c   <- myFloats ] -- float my floats
     , [name         =? n            --> doCenterFloat       |   n   <- myNames  ] -- float my names
-    , [isFullscreen                 --> myDoFullFloat                           ]
+    --, [isFullscreen                 --> myDoFullFloat                           ]
     , [manageDocks]
     ])
 
@@ -127,13 +127,13 @@ manageHook' = (composeAll . concat $
         name      = stringProperty "WM_NAME"
 
         -- classnames
+        -- xprop | grep WM_CLASS
         myWebs    = ["Nightly", "Firefox", "Firefox-esr", "Google-chrome","Chromium", "Chromium-browser","Iceweasel","iceweasel"]
         myChat  = ["Pidgin","Buddy List", "chat", "Slack", "Skype", "skype"]
         myDev   = ["urxvt"]
         myToys  = ["Conky"]
 
         -- resources
-        -- xprop | grep WM_CLASS
         myFloats  = ["vokoscreen","ffplay","notify-osd","Xmessage","XFontSel","Downloads","bashrun"]
         myIgnores = ["xfce4-notifyd","stalonetray","trayer","panel", "desktop","desktop_window","notify-osd", "Toplevel"]
 
@@ -171,9 +171,6 @@ customLayout = avoidStruts $ smartBorders(
                                       ||| Mirror tiled
                                       ||| Accordion
                                       ||| tabbedBottom shrinkText (theme donaldTheme)
-                                      {- ||| simpleCross -}
-                                      {- ||| StackTile 1 (3/100) (1/2) -}
-                                      {- ||| circleSimpleDefaultResizable -}
                              )
 
 --}}}
@@ -285,7 +282,7 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 
     -- quit, or restart
     , ((modMask,                   xK_c    ), spawn "killall -SIGUSR1 conky")
-    , ((modMask,                   xK_x    ), spawn "killall conky; conky -c ~/.xmonad/conky_dzen | dzen2 -xs 2 -ta 'r' -e 'onstart=lower'; conky -c ~/.xmonad/conky_dzen_bottom | dzen2 -x '0' -y '10000' -h '15' -ta 'r' -dock -fn 'xft:Inconsolata:size=8'")
+    , ((modMask,                   xK_x    ), spawn "killall conky; conky -c ~/.xmonad/conky_dzen | dzen2 -xs 2 -ta 'r' -e 'onstart=lower'; conky -c ~/.xmonad/conky_dzen_bottom | dzen2 -x '0' -y '10000' -h '15' -ta 'r' -dock")
     , ((modMask,                   xK_F1   ), spawn "~/.screenlayout/laptop.sh")
     , ((modMask,                   xK_F2   ), spawn "~/.screenlayout/work.sh")
     , ((modMask,                   xK_F3   ), spawn "~/.screenlayout/work_mirror.sh")

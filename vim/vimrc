@@ -3,12 +3,6 @@
 "             http://stevelosh.com/blog/2010/09/coming-home-to-vim
 "             http://learnvimscriptthehardway.stevelosh.com/
 
-" Pathogen stuff {{{
-call pathogen#infect('bundle/{}')
-"call pathogen#incubate()
-call pathogen#helptags()
-"}}}
-
 " Absolute essentials {{{
 set nocompatible	" Use Vim defaults instead of 100% vi compatibility
 set nofoldenable
@@ -261,3 +255,47 @@ function! s:CombineSelection(line1, line2, cp)
   execute 'let char = "\u'.a:cp.'"'
   execute a:line1.','.a:line2.'s/\%V[^[:cntrl:]]/&'.char.'/ge'
 endfunction
+
+"let g:syntastic_go_checkers = []
+"let g:syntastic_go_gometalinter_args = ['--disable-all']
+"let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['go'] }
+
+"let g:go_metalinter_autosave = 1
+"let g:go_metalinter_autosave_enabled = []
+autocmd FileType go nmap <leader>b :GoBuild<cr>
+autocmd FileType go nmap <leader>t :GoTestCompile<cr>
+autocmd FileType go nmap <leader>i :GoInfo<cr>
+autocmd FileType go nmap <leader>v :GoVet<cr>
+autocmd FileType go nmap <leader>d :GoDescribe<cr>
+
+let g:go_play_browser_command = '/usr/bin/firefox'
+let g:go_info_mode = 'guru'
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_format_strings = 1
+let g:go_fmt_options = {
+      \ 'goimports': '-local github.com',
+      \ }
+
+augroup filetype_go
+    autocmd!
+    au BufWritePre *.go :GoImports
+augroup END
+
+
+let g:lsp_diagnostics_echo_cursor = 1
+
+augroup LspGo
+  au!
+  autocmd User lsp_setup call lsp#register_server({
+        \ 'name': 'go-lang',
+        \ 'cmd': {server_info->['gopls']},
+        \ 'whitelist': ['go'],
+        \ })
+  autocmd FileType go setlocal omnifunc=lsp#complete
+  "autocmd FileType go nmap <buffer> gd <plug>(lsp-definition)
+  "autocmd FileType go nmap <buffer> ,n <plug>(lsp-next-error)
+  "autocmd FileType go nmap <buffer> ,p <plug>(lsp-previous-error)
+augroup END
