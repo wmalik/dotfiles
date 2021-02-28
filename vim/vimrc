@@ -3,7 +3,24 @@
 "             http://stevelosh.com/blog/2010/09/coming-home-to-vim
 "             http://learnvimscriptthehardway.stevelosh.com/
 
-" Absolute essentials {{{
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin('~/.vim/plugged')
+Plug 'fatih/vim-go'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+Plug 'vim-scripts/The-NERD-Commenter'
+Plug 'flazz/vim-colorschemes'
+Plug 'mileszs/ack.vim'
+Plug 'itchyny/lightline.vim'
+call plug#end()
+
 set nocompatible	" Use Vim defaults instead of 100% vi compatibility
 set nofoldenable
 colorscheme jellybeans
