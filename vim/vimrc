@@ -23,8 +23,6 @@ call plug#end()
 
 set nocompatible	" Use Vim defaults instead of 100% vi compatibility
 set nofoldenable
-colorscheme jellybeans
-"colorscheme distinguished
 
 syntax on
 filetype on
@@ -253,7 +251,6 @@ set clipboard=unnamedplus
 
 let g:ycm_key_list_select_completion=[]
 let g:ycm_key_list_previous_completion=[]
-let g:UltiSnipsExpandTrigger="<c-j>"
 
 set exrc
 
