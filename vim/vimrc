@@ -19,10 +19,18 @@ Plug 'vim-scripts/The-NERD-Commenter'
 Plug 'flazz/vim-colorschemes'
 Plug 'mileszs/ack.vim'
 Plug 'itchyny/lightline.vim'
+" Plug 'leafgarland/typescript-vim'
+" Plug 'neoclide/coc.nvim'
+" Plug 'antoinemadec/coc-fzf'
 call plug#end()
+
+" let g:coc_global_extensions = [
+      " \'coc-tsserver',]
 
 set nocompatible	" Use Vim defaults instead of 100% vi compatibility
 set nofoldenable
+
+colorscheme jellybeans
 
 syntax on
 filetype on
@@ -283,7 +291,6 @@ autocmd FileType go nmap <leader>v :GoVet<cr>
 autocmd FileType go nmap <leader>d :GoDescribe<cr>
 
 let g:go_play_browser_command = '/usr/bin/firefox'
-let g:go_info_mode = 'guru'
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_types = 1
@@ -296,20 +303,4 @@ let g:go_fmt_options = {
 augroup filetype_go
     autocmd!
     au BufWritePre *.go :GoImports
-augroup END
-
-
-let g:lsp_diagnostics_echo_cursor = 1
-
-augroup LspGo
-  au!
-  autocmd User lsp_setup call lsp#register_server({
-        \ 'name': 'go-lang',
-        \ 'cmd': {server_info->['gopls']},
-        \ 'whitelist': ['go'],
-        \ })
-  autocmd FileType go setlocal omnifunc=lsp#complete
-  "autocmd FileType go nmap <buffer> gd <plug>(lsp-definition)
-  "autocmd FileType go nmap <buffer> ,n <plug>(lsp-next-error)
-  "autocmd FileType go nmap <buffer> ,p <plug>(lsp-previous-error)
 augroup END
