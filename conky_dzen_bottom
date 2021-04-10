@@ -1,22 +1,24 @@
-# Author: Wasif Malik (wmalik@gmail.com)
+--[[
+]]
 
-out_to_console yes
-out_to_x no
-update_interval 1
-short_units yes
-if_up_strictness link
-cpu_avg_samples 4
-border_outer_margin 20
-border_inner_margin 20
-gap_y 40
+conky.config = {
+    border_width = 1,
+    net_avg_samples = 2,
+    out_to_console = true,
+    out_to_x = false,
+    update_interval = 1.0,
+    if_up_strictness = 'link',
+    cpu_avg_samples = 4,
 
-# Conditional warning template
-template0 ${if_match \1 \2 \3}\4${endif}
-template1 wlp59s0
-template2 enp0s31f6
+    template0 = '${if_match \\1 \\2 \\3}\\4${endif}',
+    template1 = 'wlp4s0',
+    template2 = 'enp0s31f6',
+}
 
-TEXT
-[temp: ${acpitemp}] \
+conky.text = [[
+${if_match ${ibm_fan} > 0} \
+Fan:${ibm_fan}\
+${endif}\
 ${if_match ${acpitemp} > 70}^bg(red)Hot (${acpitemp}C)^bg() ${endif}\
 ${if_match ${swapperc} > 35}^bg(red)Swap (${swapperc}%)^bg() ${endif}\
 ${if_mounted /mnt}\
@@ -64,3 +66,4 @@ ${if_up tun0}\
 ^bg(Blue)^fg(White) VPN \
 (${totalup tun0}) \
 ${endif}\
+]]

@@ -1,9 +1,8 @@
 # Author: Wasif Malik (wmalik@gmail.com)
 
-out_to_console yes
-out_to_x no
-update_interval 1
-short_units yes
+out_to_console
+update_interval 1.0
+short_units true
 if_up_strictness link
 cpu_avg_samples 4
 border_outer_margin 20
