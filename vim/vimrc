@@ -11,14 +11,22 @@ endif
 
 call plug#begin('~/.vim/plugged')
 Plug 'fatih/vim-go'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 Plug 'vim-scripts/The-NERD-Commenter'
 Plug 'flazz/vim-colorschemes'
 Plug 'mileszs/ack.vim'
-Plug 'itchyny/lightline.vim'
+Plug 'hashivim/vim-terraform'
+Plug 'instant-markdown/vim-instant-markdown', {'for': 'markdown', 'do': 'yarn install'}
+Plug 'tpope/vim-surround'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'ryanoasis/vim-devicons'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'lambdalisue/fern.vim'
 " Plug 'leafgarland/typescript-vim'
 " Plug 'neoclide/coc.nvim'
 " Plug 'antoinemadec/coc-fzf'
@@ -106,10 +114,8 @@ set wildignore=*.o,*~,*.beam,*.swf,*.mp3,*.jpg,*.png,ebin,.git
 command! -nargs=* -complete=shellcmd R new | setlocal buftype=nofile bufhidden=hide noswapfile  | r !<args>
 
 " grep the word under cursor (case insensitive) in multiple directories
-nmap <leader>f :R grep -sirn <c-r>=expand("<cword> *")<cr> .<cr> :set ft=sh<cr>
-
-" shortcut to find a string in multiple src dirs, example :F something
-command! -nargs=* F new | setlocal buftype=nofile bufhidden=hide noswapfile | r !Ack --vimgrep <args>
+" nmap <leader>f :R grep -sirn <c-r>=expand("<cword> *")<cr> .<cr> :set ft=sh<cr>
+nmap <leader>f :Ag <c-r>=expand("<cword> *")<cr> .<cr>
 
 " Open a scratch buffer
 command! S new | setlocal buftype=nofile bufhidden=hide noswapfile
@@ -121,6 +127,8 @@ command! Timestamp r! date \+\%s
 nnoremap <leader>d :r! date \+\%Y-\%m-\%d\ \%H:\%M:\%S<cr>
 nnoremap <leader>t :r! date -d\@<C-r><C-w><cr>
 nnoremap <leader>T :r! date \+\%s<cr>
+
+nnoremap <C-p> :Files<CR>
 
 let mapleader = ","
 inoremap jk <Esc>
@@ -141,27 +149,8 @@ nnoremap :Set :set
 nnoremap T :Texplore<CR>
 inoremap <C-a> <C-o>^
 inoremap <C-e> <C-o>$
-"}}}
 
-" Mouse {{{
 set mouse=a
-"}}}
-
-" Erlang {{{
-nnoremap <leader>B 2F<d2f>i
-command! Er set ft=erlang
-"}}}
-
-" Plugin Conf {{{
-let g:CommandTMaxHeight=10
-"}}}
-
-" move a line upward or downward
-nnoremap - ddp
-nnoremap _ ddkP
-
-" Delete current line in insert mode
-inoremap <c-d> <esc>ddi
 
 " Convert the current word to uppercase insert mode
 inoremap <C-u> <Esc>viwUea
