@@ -4,7 +4,7 @@
 !............!
 ! Functional !
 !............!
-URxvt.hold: true
+URxvt.hold: false
 
 !............!
 ! Appearance !
@@ -12,7 +12,7 @@ URxvt.hold: true
 ! Colors from /etc/X11/rgb.txt
 
 URxvt.title: rxvt
-URxvt.internalBorder: 10
+URxvt.internalBorder: 5
 URxvt.scrollBar: true
 URxvt.scrollBar_right: true
 URxvt*saveLines:128000
@@ -26,15 +26,14 @@ URxvt.thickness: 6
 URxvt.visualBell: false
 URxvt.mapAlert: true
 ! Taken from http://bastian.rieck.ru/blog/posts/2013/making_urxvt_beautiful/
-!urxvt*transparent: true
-!URxvt.shading: 5
-
+urxvt*transparent: true
+URxvt.shading: 5
 
 !............!
 ! Fonts      !
 !............!
-!URxvt*font: xft:terminus:size=12
-URxvt*font: xft:Inconsolata:size=12
+! URxvt*font: xft:Inconsolata:size=8
+URxvt*font: xft:Fira Code:size=8
 !URxvt.letterSpace: 1
 
 !............!
@@ -77,29 +76,31 @@ URxvt*cursorBlink: 1
 
 ! Urgency hooks
 URxvt.urgentOnBell: true
-URxvt.iso14755: False
 
 ! Other custom settings
 URxvt*loginShell: true
-URxvt.perl-ext-common:  default,matcher,font-size,keyboard-select,clipboard,url-select,confirm-paste
+URxvt.perl-ext-common: default,font-size,keyboard-select,clipboard,url-select,confirm-paste,selection-to-clipboard
+URxvt.perl-lib: ~/.urxvt/ext
 URxvt.url-launcher: /usr/bin/firefox
 
-URxvt.matcher.button:   1
-
-! XK_J
-URxvt.keysym.C-S-0x004b: perl:font-size:increase
-! XK_K
-URxvt.keysym.C-S-0x004a: perl:font-size:decrease
 URxvt.keysym.C-S-Up:     perl:font-size:incglobal
 URxvt.keysym.C-S-Down:   perl:font-size:decglobal
 URxvt.keysym.Shift-Up: command:\033]720;1\007
 URxvt.keysym.Shift-Down: command:\033]721;1\007
+URxvt.keysym.C-S-0x004b: perl:font-size:increase
+URxvt.keysym.C-S-0x004a: perl:font-size:decrease
+
 
 
 ! For keyboard-select
 URxvt.keysym.M-Escape: perl:keyboard-select:activate
 URxvt.clipboard.autocopy: true
 URxvt.keysym.M-u: perl:url-select:select_next
+
+URxvt.keysym.Shift-Control-V: eval:paste_clipboard
+URxvt.keysym.Shift-Control-C: eval:selection_to_clipboard
+URxvt.iso14755: false
+URxvt.iso14755_52: false
 
 ! Dzen2 settings
 dzen2.font:       xft:Inconsolata:pixelsize=12
