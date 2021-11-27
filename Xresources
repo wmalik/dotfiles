@@ -109,18 +109,19 @@ dzen2.background: black
 
 
 ! For HiDPI displays
-!Xft.dpi: 97
-!Xft.autohint: 0
-!Xft.lcdfilter:  lcddefault
-!Xft.hintstyle:  hintfull
-!Xft.hinting: 1
-!Xft.antialias: 1
-!Xft.rgba: rgb
+Xft.dpi: 192
+Xft.autohint: 0
+Xft.lcdfilter:  lcddefault
+Xft.hintstyle:  hintfull
+Xft.hinting: 1
+Xft.antialias: 1
+Xft.rgba: rgb
 
 rofi.modi: combi
 rofi.combi-modi: window,ssh,drun,run
 rofi.terminal: urxvt
-rofi.lines: 15
+rofi.lines: 5
+rofi.dpi: 1
 rofi.cycle: false
 rofi.show-icons: true
 rofi.fake-transparency: true

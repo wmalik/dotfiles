@@ -4,3 +4,6 @@ xscreensaver -nosplash &
 compton --daemon
 # Enable to tap to click
 #synclient TapButton1=1 TapButton2=3 TapButton3=2
+
+## For HiDPI on dell xps 13
+xrandr --dpi 192
