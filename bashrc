@@ -51,7 +51,6 @@ alias ls='ls --color=auto'
 alias f='find . -name'
 alias g='git'
 alias girn='grep -irn'
-# TODO: git clone $1 && cd $2 && git shortlog -sne
 alias digs="dig +short"
 alias tree="tree -AC"
 alias now="date +%s"
@@ -68,13 +67,16 @@ alias h="heroku"
 alias n="notify-send -t 2000"
 alias sclone="sh -c 'date && [ $# -eq 2 ] && git clone $1 $2 && cd $2 && git shortlog -sne'"
 alias v="vim"
-# TODO:
-# write a function clone() to do git clone $repo + cd dir + git stats
+alias i3config="vim ~/.config/i3/config"
+alias brc="vim ~/.bashrc && source ~/.bashrc"
+alias arc="vim ~/.aliasrc && source ~/.aliasrc"
+alias dc="docker-compose"
 
-[ -f ~/.privrc ] && source ~/.privrc
 xset r rate 300 100
 xset b off
-#sudo modprobe -r psmouse && sudo modprobe psmouse proto=imps
-
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+[ -f ~/.privrc ] && source ~/.privrc
+[ -f ~/.aliasrc ] && source ~/.aliasrc
+
+eval "$(starship init bash)"
