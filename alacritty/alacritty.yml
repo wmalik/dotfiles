@@ -8,8 +8,6 @@
 #
 # All imports must either be absolute paths starting with `/`, or paths relative
 # to the user's home directory starting with `~/`.
-#import:
-#  - /path/to/alacritty.yml
 
 # Any items in the `env` entry below will be added as
 # environment variables. Some entries may override variables
@@ -23,7 +21,7 @@
   # available, otherwise `xterm-256color` is used.
   #TERM: alacritty
 
-#window:
+window:
   # Window dimensions (changes require restart)
   #
   # Number of lines/columns (not pixels) in the terminal. The number of columns
@@ -67,7 +65,7 @@
   #
   # Window opacity as a floating point number from `0.0` to `1.0`.
   # The value `0.0` is completely transparent and `1.0` is opaque.
-  #opacity: 1.0
+  opacity: 1
 
   # Startup Mode (changes require restart)
   #
@@ -181,8 +179,67 @@ font:
 # If `true`, bold text is drawn using the bright color variants.
 draw_bold_text_with_bright_colors: true
 
-# Colors (Tomorrow Night)
-#colors:
+
+# # Colors (Pencil Light)
+# colors:
+  # # Default Colors
+  # primary:
+    # background: '0xf1f1f1'
+    # foreground: '0x424242'
+  # # Normal colors
+  # normal:
+    # black:   '0x212121'
+    # red:     '0xc30771'
+    # green:   '0x10a778'
+    # yellow:  '0xa89c14'
+    # blue:    '0x008ec4'
+    # magenta: '0x523c79'
+    # cyan:    '0x20a5ba'
+    # white:   '0xe0e0e0'
+  # # Bright colors
+  # bright:
+    # black:   '0x212121'
+    # red:     '0xfb007a'
+    # green:   '0x5fd7af'
+    # yellow:  '0xf3e430'
+    # blue:    '0x20bbfc'
+    # magenta: '0x6855de'
+    # cyan:    '0x4fb8cc'
+    # white:   '0xf1f1f1'
+# https://github.com/eendroroy/alacritty-theme/blob/master/themes/base16_default_dark.yaml
+# Colors (Base16 Default Dark)
+colors:
+  # Default colors
+  primary:
+    background: '0x181818'
+    foreground: '0xd8d8d8'
+
+  # Colors the cursor will use if `custom_cursor_colors` is true
+  cursor:
+    text: '0xd8d8d8'
+    cursor: '0xd8d8d8'
+
+  # Normal colors
+  normal:
+    black:   '0x181818'
+    red:     '0xab4642'
+    green:   '0xa1b56c'
+    yellow:  '0xf7ca88'
+    blue:    '0x7cafc2'
+    magenta: '0xba8baf'
+    cyan:    '0x86c1b9'
+    white:   '0xd8d8d8'
+
+  # Bright colors
+  bright:
+    black:   '0x585858'
+    red:     '0xab4642'
+    green:   '0xa1b56c'
+    yellow:  '0xf7ca88'
+    blue:    '0x7cafc2'
+    magenta: '0xba8baf'
+    cyan:    '0x86c1b9'
+    white:   '0xf8f8f8'#colors:
   # Default colors
   #primary:
   #  background: '#1d1f21'
@@ -383,7 +440,7 @@ cursor:
     #   - ▇ Block
     #   - _ Underline
     #   - | Beam
-    shape: Underline
+    shape: Beam
 
     # Cursor blinking state
     #
@@ -400,7 +457,7 @@ cursor:
   # the style of the active value of the normal cursor.
   #
   # See `cursor.style` for available options.
-  vi_mode_style: Block
+  vi_mode_style: Beam
 
   # Cursor blinking interval in milliseconds.
   blink_interval: 500

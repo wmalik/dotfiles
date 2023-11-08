@@ -2,7 +2,7 @@ set $mod Mod4
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango:monospace 18
+font pango:monospace 8
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
@@ -13,6 +13,8 @@ font pango:monospace 18
 
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
 # screen before suspend. Use loginctl lock-session to lock your screen.
+#r
+exec --no-startup-id xset s 600
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 
 # NetworkManager is the most popular way to manage wireless networks on Linux,
@@ -27,6 +29,7 @@ exec --no-startup-id i3-msg 'workspace 4; exec snap run slack'
 
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 exec_always --no-startup-id $HOME/.fehbg
+# exec_always --no-startup-id yubikey-touch-detector --libnotify
 
 exec_always --no-startup-id $HOME/bin/i3moveallworkspaces.sh
 
@@ -39,6 +42,9 @@ bindsym $mod+Shift+m exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ tog
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 bindsym --whole-window --border $mod+button4 exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
 bindsym --whole-window --border $mod+button5 exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
+bindsym XF86AudioPrev exec --no-startup-id playerctl --player=spotify previous
+bindsym XF86AudioNext exec --no-startup-id playerctl --player=spotify next
+bindsym XF86AudioPlay exec --no-startup-id playerctl --player=spotify play-pause
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -68,9 +74,11 @@ bindsym $mod+p exec "rofi -show combi"
 bindsym $mod+b exec "rofi -show bookmarks -modi bookmarks:/home/wasif/wasif/labs/rofi-my/bookmarks.sh"
 bindsym $mod+m exec notify-send "DUNST_COMMAND_PAUSE" | echo " notifications paused" | dmenu
 bindsym $mod+Shift+n exec notify-send "DUNST_COMMAND_RESUME" && echo "notifications resumed" | dmenu
-bindsym $mod+Shift+i exec alacritty -e bash -c "vim $HOME/.config/i3/config"
+bindsym $mod+Shift+i exec alacritty -e bash -i -c "vim $HOME/.config/i3/config"
+bindsym $mod+Shift+o exec alacritty -e bash -i -c "$HOME/bin/ogit"
 bindsym $mod+Shift+g exec firefox https://github.com/golottie
-bindsym $mod+Shift+b exec xrandr --output eDP-1 --brightness 1.0
+# connect to earphones
+bindsym $mod+Shift+b exec notify-send -i stock_smiley-1.png "Connecting to 14:3F:A6:EF:EE:E1" && bluetoothctl connect 14:3F:A6:EF:EE:E1
 
 
 # change focus
@@ -116,7 +124,7 @@ bindsym $mod+f fullscreen toggle
 # change container layout (stacked, tabbed, toggle split)
 bindsym $mod+s layout stacking
 bindsym $mod+Shift+t layout tabbed
-bindsym $mod+t layout toggle split
+bindsym $mod+t layout toggle
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
@@ -169,6 +177,7 @@ bindsym $mod+Shift+0 move container to workspace number $ws10
 
 bindsym $mod+Tab workspace back_and_forth
 
+
 assign [class="Firefox"] $ws2
 assign [class="Nightly"] $ws2
 assign [class="Slack"] $ws4
@@ -189,11 +198,6 @@ mode "resize" {
         bindsym j resize grow height 5 px or 5 ppt
         bindsym k resize shrink height 5 px or 5 ppt
         bindsym l resize grow width 5 px or 5 ppt
-
-        bindsym Left resize shrink width 5 px or 5 ppt
-        bindsym Down resize grow height 5 px or 5 ppt
-        bindsym Up resize shrink height 5 px or 5 ppt
-        bindsym Right resize grow width 5 px or 5 ppt
 
         bindsym Return mode "default"
         bindsym Escape mode "default"
@@ -218,9 +222,21 @@ smart_gaps on
 smart_borders on
 hide_edge_borders smart_no_gaps
 
-for_window [class="^.*"] border pixel 2
+# bindsym $mod+Shift+f mark --toggle sticky
+# for_window [con_mark="sticky"] sticky enable
+# for_window [con_mark="sticky"] floating enable
+for_window [all] title_window_icon off
+for_window [all] move workspace
+for_window [all] border pixel 2
+for_window [all] title_format "%class %title"
 bindsym $mod+Shift+v exec ~/.vim-anywhere/bin/run
 for_window [title="vim-anywhere"] floating enable
+for_window [title="vim-anywhere"] sticky enable
+# Float firefox video windows on all workspaces
+for_window [title="Picture-in-Picture"] sticky enable
 for_window [class="Gnome-calendar"] floating enable
 for_window [class="Blueman-manager"] floating enable
 for_window [class="Pavucontrol"] floating enable
+
+# class        border  backgr. text    indicator child_border
+client.focused #d6a53c #285577 #ffffff #2e9ef4   #d6a53c

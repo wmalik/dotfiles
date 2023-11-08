@@ -86,7 +86,7 @@
 
     ### Text ###
 
-    font = Roboto Thin 8
+    font = Roboto Thin 12
 
     # The spacing between lines.  If the height is smaller than the
     # font height, it will get raised to the font height.
@@ -222,7 +222,7 @@
     # using the resolution and physical size. This might be useful in setups
     # where there are multiple screens with very different dpi values.
     # per_monitor_dpi = false
-    per_monitor_dpi = false
+    per_monitor_dpi = true
 
 [shortcuts]
 
@@ -295,6 +295,11 @@
 #[script-test]
 #    summary = "*script*"
 #    script = dunst_test.sh
+
+[ignore]
+    # This notification will not be displayed
+    summary = "Basilisk X HyperSpeed"
+    format = ""
 
 #[ignore]
 #    # This notification will not be displayed

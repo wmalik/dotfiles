@@ -20,17 +20,34 @@ Plug 'flazz/vim-colorschemes'
 Plug 'mileszs/ack.vim'
 Plug 'hashivim/vim-terraform'
 Plug 'instant-markdown/vim-instant-markdown', {'for': 'markdown', 'do': 'yarn install'}
+let g:instant_markdown_autostart = 0
+let g:instant_markdown_mermaid = 1
+autocmd FileType markdown nmap <leader>p :InstantMarkdownPreview
 Plug 'tpope/vim-surround'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'ryanoasis/vim-devicons'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'lambdalisue/fern.vim'
-" Plug 'leafgarland/typescript-vim'
-" Plug 'neoclide/coc.nvim'
-" Plug 'antoinemadec/coc-fzf'
+" Plug 'lambdalisue/fern.vim' tree viewer
+Plug 'yegappan/mru'
+Plug 'takac/vim-hardtime'
+Plug 'eslint/eslint'
+Plug 'prabirshrestha/vim-lsp'
+" Plug 'mattn/vim-lsp-settings'
+" Plug '~/lottie/labs/vim-lsp-settings'
+let g:hardtime_default_on = 0
+let g:hardtime_showmsg = 1
+let g:hardtime_ignore_quickfix = 1
+let g:hardtime_allow_different_key = 1
+let g:hardtime_maxcount = 2
+" Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarnpkg install --frozen-lockfile'}
 call plug#end()
+
+
+" FOR DEBUGGING vim-lsp
+" let g:lsp_log_verbose = 1
+" let g:lsp_log_file = expand('~/lottie/labs/vim-lsp-logs/debug.log')
 
 " let g:coc_global_extensions = [
       " \'coc-tsserver',]
@@ -67,6 +84,7 @@ set listchars=tab:▸\ ,eol:¬
 set smartcase
 set showmatch
 set noantialias
+" set number relativenumber
 
 " For smart indenting
 "set smartindent "'smartindent' and 'cindent' might interfere with file type
@@ -138,10 +156,6 @@ nnoremap <C-k> <C-w>W
 nnoremap <leader>n :NERDTreeToggle<CR>
 nnoremap <C-l> :tabnext<CR>
 nnoremap <C-h> :tabprev<CR>
-nnoremap <leader>l :+tabmove<CR>
-nnoremap <leader>h :-tabmove<CR>
-nnoremap <Tab>n :tabnew<CR>
-nnoremap <Tab>d :tabclose<CR>
 noremap <silent> <Space> :noh<Bar>:echo<CR>
 nnoremap <leader>k :set list!<CR>
 nnoremap :W :w
@@ -156,13 +170,6 @@ set mouse=a
 inoremap <C-u> <Esc>viwUea
 
 iabbrev adn and
-iabbrev @@ wmalik@gmail.com
-iabbrev ldeb lager:debug("", [])
-iabbrev ei error_logger:info_msg("", [])
-iabbrev ew error_logger:warning_msg("", [])
-iabbrev ee error_logger:error_msg("", [])
-iabbrev fp fmt.Printf("\nDEBUG: %+v\n", abc)
-"iabbrev pgv proplists:get_value(
 
 nnoremap <leader>ve :tabnew $MYVIMRC<cr>
 nnoremap <leader>vs :source ~/.vimrc<cr>
@@ -203,15 +210,6 @@ augroup filetype_html
     au FileType html setl sw=2 sts=2
 augroup END
 
-let g:ycm_python_binary_path = 'python'
-augroup filetype_python
-    autocmd!
-    autocmd FileType,BufNewFile,BufRead *.py setlocal filetype=python
-    au BufNewFile,BufRead *.py  setl tabstop=2  softtabstop=2  shiftwidth=2  textwidth=80  expandtab  autoindent  fileformat=unix
-    map <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
-    nnoremap <leader>o yiwoprint "<esc>pa: {}".format(<esc>pa)<esc>
-augroup END
-
 inoremap <C-h> <left>
 inoremap <C-l> <right>
 inoremap <C-j> <down>
@@ -219,8 +217,8 @@ inoremap <C-k> <up>
 xnoremap . :norm.<CR>
 
 " Move visual block (only for eye-candy)
-vnoremap J :m '>+1<CR>gvgv
-vnoremap K :m '<-2<CR>gvgv
+" vnoremap J :m '>+1<CR>gvgv
+" vnoremap K :m '<-2<CR>gvgv
 
 let g:ref_use_vimproc = 1
 let g:ref_open = 'split'
@@ -236,6 +234,7 @@ set autowriteall
 
 nmap <leader>p :set paste<cr>"*p:set nopaste<cr>
 nmap <leader>np :set nopaste<cr>
+nmap <leader>m :MRUToggle<cr>
 
 if executable('ag')
   let g:ackprg = 'ag --vimgrep'
@@ -278,18 +277,80 @@ autocmd FileType go nmap <leader>t :GoTestCompile<cr>
 autocmd FileType go nmap <leader>i :GoInfo<cr>
 autocmd FileType go nmap <leader>v :GoVet<cr>
 autocmd FileType go nmap <leader>d :GoDescribe<cr>
+autocmd FileType go nmap <leader>r :GoRename<cr>
+autocmd FileType go nmap <leader>R :GoReferrers<cr>
+autocmd FileType go nmap <leader>f :GoFillStruct<cr>
+autocmd FileType go nmap <leader>l yiwolog.Println("DEBUG", "<Esc>pa", <Esc>pa)<Esc>
+autocmd FileType go nmap <leader>e oif err != nil {<cr>  fmt.Println("DEBUG", err)<cr>  return nil, err<cr>}<Esc>:w<cr>
 
 let g:go_play_browser_command = '/usr/bin/firefox'
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_types = 1
 let g:go_highlight_fields = 1
-let g:go_highlight_format_strings = 1
-let g:go_fmt_options = {
-      \ 'goimports': '-local github.com',
-      \ }
+" let g:go_highlight_format_strings = 1
+" let g:go_fmt_options = {
+      " \ 'goimports': '-local github.com',
+      " \ }
+" let g:go_metalinter_enabled = []
+" let g:go_metalinter_command = 'golangci-lint'
 
-augroup filetype_go
-    autocmd!
-    au BufWritePre *.go :GoImports
-augroup END
+" augroup filetype_go
+    " autocmd!
+    " au BufWritePre *.go :GoImports
+" augroup END
+
+" GoTo code navigation (from Theo)
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gI <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+
+" Ps = 0  -> blinking block.
+" Ps = 1  -> blinking block (default).
+" Ps = 2  -> steady block.
+" Ps = 3  -> blinking underline.
+" Ps = 4  -> steady underline.
+" Ps = 5  -> blinking bar (xterm).
+" Ps = 6  -> steady bar (xterm).
+" let &t_SI = "\e[3 q"
+" let &t_EI = "\e[2 q"
+
+" Terraform Docs
+nmap <leader>t :call TerraformDocs()<CR>
+fun! TerraformDocs()
+    if &ft =~ "terraform"
+      let s:base_url = "https://registry.terraform.io/providers/hashicorp" 
+      let s:tf_version = "latest"
+      let s:type_mapping = {"data": "data-sources", "resource": "resources"}
+      let s:split_line = split(getline("."), " ")
+      let s:type = s:type_mapping[s:split_line[0]]
+      let s:keyword = trim(s:split_line[1], '"')
+      let s:parts = split(s:keyword, "_")
+      let s:provider = s:parts[0]
+      let s:name = join(s:parts[1:], "_")
+      let s:url = join([s:base_url, s:provider, s:tf_version, "docs", s:type, s:name], "/")
+      silent exec "!xdg-open '".s:url."'"
+      silent exec "redra!"
+    else
+      return
+    endif
+endfun
+
+
+if executable('terramate-ls')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'terramate-ls',
+        \ 'cmd': {server_info->['terramate-ls']},
+        \ 'allowlist': ['hcl'],
+        \ })
+endif
+
+let g:lsp_diagnostics_echo_cursor = 1
+let g:lsp_diagnostics_highlights_enabled = 0
+
+" check this out on vim 9
+" let g:lsp_diagnostics_virtual_text_enabled = 1
+" let g:lsp_diagnostics_virtual_text_insert_mode_enabled = 1
+

@@ -43,7 +43,7 @@ bottom = true
 background = ${colors.background}
 foreground = ${colors.foreground}
 
-line-size = 3
+line-size = 6
 line-color = #f00
 
 border-size = 0
@@ -62,7 +62,7 @@ font-2 = Ubuntu Nerd Font Mono;3
 font-3 = Noto Color Emoji:scale=10;2
 
 modules-left = i3 title
-modules-right = config wlan memory cpu temperature date calendar battery pulseaudio spotify
+modules-right = config earphones eth wlan swap memory cpu temperature date calendar battery pulseaudio spotify
 
 tray-position = right
 tray-padding = 2
@@ -190,21 +190,56 @@ use-actual-brightness = true
 ; Default: false
 enable-scroll = true
 
+
 [module/cpu]
 type = internal/cpu
-interval = 2
-format-prefix = "CPU"
+interval = 1
+format = <bar-load>
+format-prefix = ""
 format-prefix-foreground = ${colors.foreground-alt}
-format-underline = #f90000
 label = %percentage:2%%
+bar-load-width = 10
+bar-load-foreground-0 = #c1cb7f
+bar-load-foreground-1 = #d9c37f
+bar-load-foreground-2 = #e4a48a
+bar-load-foreground-3 = #ed9896
+bar-load-indicator =
+bar-load-indicator-font = 0
+bar-load-indicator-foreground = #55fdf6e3
+bar-load-fill = |
+bar-load-fill-font = 0
+bar-load-empty = |
+bar-load-empty-font = 0
+bar-load-empty-foreground = #99586e75
 
 [module/memory]
 type = internal/memory
 interval = 2
+format = <bar-used>
 format-prefix = " "
 format-prefix-foreground = ${colors.foreground-alt}
-format-underline = #4bffdc
-label = %percentage_used%%
+label = %percentage_used:2%%/%percentage_swap_used:2%%
+bar-used-width = 10
+bar-used-foreground-0 = #c1cb7f
+bar-used-foreground-1 = #d9c37f
+bar-used-foreground-2 = #e4a48a
+bar-used-foreground-3 = #ed9896
+bar-used-indicator =
+bar-used-indicator-font = 0
+bar-used-indicator-foreground = #55fdf6e3
+bar-used-fill = |
+bar-used-fill-font = 0
+bar-used-empty = |
+bar-used-empty-font = 0
+bar-used-empty-foreground = #99586e75
+
+[module/swap]
+type = internal/memory
+interval = 2
+format = <label>
+format-prefix = "swap"
+format-prefix-foreground = ${colors.foreground-alt}
+label = %percentage_swap_used:2%%
 
 [module/network]
 type = internal/network
@@ -216,16 +251,11 @@ interface = wlp113s0
 interval = 4.0
 
 format-connected = <ramp-signal> <label-connected>
-; format-connected-underline = #9f78e1
 label-connected = %essid:0:10:..% %local_ip% %upspeed% %downspeed%
 
 format-disconnected = <label-disconnected>
-label-disconnected = 
+label-disconnected = 睊
 label-disconnected-foreground = ${colors.red}
-;format-disconnected = <label-disconnected>
-;format-disconnected-underline = ${self.format-connected-underline}
-;label-disconnected = %ifname% disconnected
-;label-disconnected-foreground = ${colors.foreground-alt}
 
 ramp-signal-0 = 睊
 ramp-signal-1 = 直
@@ -236,19 +266,12 @@ ramp-signal-foreground = ${colors.foreground-alt}
 
 [module/eth]
 type = internal/network
-interface = enxa0cec8dbf333
+interface = enx4ce173421b3e
 interval = 4.0
 
-format-connected-underline = #55aa55
-format-connected-prefix = " "
-format-connected-prefix-foreground = ${colors.foreground-alt}
-label-connected = %local_ip%
-
-format-disconnected =
-;format-disconnected = <label-disconnected>
-;format-disconnected-underline = ${self.format-connected-underline}
-;label-disconnected = %ifname% disconnected
-;label-disconnected-foreground = ${colors.foreground-alt}
+format-connected-prefix = "eth "
+format-connected = <label-connected>
+label-connected = %local_ip% %upspeed% %downspeed%
 
 [module/date]
 type = internal/date
@@ -265,13 +288,14 @@ format-prefix-foreground = ${colors.foreground-alt}
 
 label = %date% %time%
 label-foreground = ${colors.primary}
+; format-underline = ${colors.primary}
 
 [module/pulseaudio]
 type = internal/pulseaudio
 click-right = pavucontrol -t 4
 
 format-volume = <ramp-volume> <label-volume>
-label-volume = %percentage%%
+label-volume = %percentage:2%%
 label-volume-foreground = ${root.foreground}
 
 label-muted = 
@@ -315,7 +339,7 @@ bar-volume-empty-foreground = ${colors.foreground-alt}
 type = internal/battery
 battery = BAT0
 adapter = AC
-full-at = 98
+full-at = 99
 label-charging = "ﴌ %percentage%%"
 label-discharging = " %percentage%%"
 label-full = "ﮣ"
@@ -390,6 +414,13 @@ type = custom/text
 content = 📅
 content-font = 3
 click-left = gnome-calendar
+
+[module/earphones]
+type = custom/script
+exec = bluetoothctl info 14:3F:A6:EF:EE:E1 | grep 'Connected: yes' 1>/dev/null && echo '﫽' || echo '﫾'
+interval = 5
+click-left = blueman-manager
+format-foreground = ${colors.foreground-alt}
 
 [settings]
 screenchange-reload = true
